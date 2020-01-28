@@ -1,7 +1,7 @@
 """
 Card.py
 ==================
-Card module.
+Card Module.
 """
 class Card:
     """ Card class """
