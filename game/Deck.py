@@ -6,17 +6,15 @@ Deck module.
 from Card import Card
 
 class Deck:
-    """ Deck class """
+    """ Deck class 
+    
+    Parameters
+    ------------
+    mode
+        A string to set the length of starting deck. This is either 'full' or
+        'small'.
+    """
     def __init__(self, mode='full'):
-        """
-        deck init.
-
-        Parameters
-        -------------
-        mode
-            a string to set the length of starting deck.
-            either 'full' or 'small'
-        """
         self.mode = None
         self.deck = []
         self.set_mode(mode)
