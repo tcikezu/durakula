@@ -9,7 +9,7 @@ class Deck:
     """ Deck class """
     def __init__(self, mode='full'):
         """
-        deck init.
+        Deck init function.
 
         Parameters
         -------------
