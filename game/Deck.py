@@ -1,7 +1,7 @@
 """
 Deck.py
 ===============
-Deck module
+Deck module.
 """
 from Card import Card
 
@@ -23,7 +23,7 @@ class Deck:
         self.get_cards()
 
     def __str__(self):
-        """ Prints the entire deck
+        """ Prints the entire deck.
         """
         card_names = []
         for c in self.deck:
@@ -31,7 +31,7 @@ class Deck:
         return ' '.join(card_names)
 
     def __len__(self):
-        """ Returns the length of the current deckk
+        """ Returns the length of the current deck.
         """
         return len(self.deck)
 
