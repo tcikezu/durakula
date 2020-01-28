@@ -51,7 +51,8 @@ class Deck:
             for v in values:
                 self.deck.append(Card(s,v))
 
-    def get_cards(self):
+    def _get_cards(self):
+        """ Private method to build the deck given mode"""
         if self.mode == 'full':
             suits = ['S', 'C', 'H', 'D']
             values = range(2,15)

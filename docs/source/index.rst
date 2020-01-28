@@ -5,6 +5,7 @@ Welcome to durakula's documentation!
 
 .. automodule:: Deck
     :members:
+    :private-members:
 
 .. toctree:: 
    :maxdepth: 2
