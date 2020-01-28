@@ -1,4 +1,10 @@
+"""
+Card.py
+==================
+card module
+"""
 class Card:
+    """ card class """
     def __init__(self, suit, value):
         self.suit = None
         self.value = None
