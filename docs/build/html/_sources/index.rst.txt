@@ -3,7 +3,7 @@ Welcome to durakula's documentation!
 .. automodule:: Card
     :members:
 
-.. automodule:: Deck
+.. autoclass:: Deck.Deck
     :members:
     :private-members:
 

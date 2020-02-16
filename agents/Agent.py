@@ -1,4 +1,5 @@
-class Agent:
-    def __init__(self):
-        #TODO
-        pass 
+Class Agent():
+    def __init__():
+    #TODO
+        pass
+
