@@ -4,6 +4,7 @@ Deck.py
 Deck module.
 """
 from Card import Card
+import random
 
 class Deck:
     """A Deck is an object that contains a collection of Cards.
@@ -68,3 +69,14 @@ class Deck:
             raise Exception('Invalid Deck Type.')
         self.build_deck(suits, values)
 
+
+    def draw(self):
+        """ Private method to build the deck given mode"""
+        drawn = self.deck[0]
+        self.deck = self.deck[1:]
+        return drawn
+       
+    def shuffle(self):
+        """ Private method to build the deck given mode"""
+        random.shuffle(self.deck)
+    
