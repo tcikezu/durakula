@@ -46,8 +46,9 @@ class Deck(CardCollection):
             self.n_vals = 9
 
     def draw(self, n=1):
-        rand_idx = np.array(random.sample(np.argwhere(self.cards==1).tolist(), k=1))
+        rand_idx = np.array(random.sample(np.argwhere(self.cards==1).tolist(), k=n))
         drawn_card = np.zeros((self.n_suits, self.n_vals))
         drawn_card[rand_idx[:,0], rand_idx[:,1]] = 1
         self.cards[rand_idx[:,0], rand_idx[:,1]] = 0
         return drawn_card
+
