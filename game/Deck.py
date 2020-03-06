@@ -69,11 +69,10 @@ class Deck:
             raise Exception('Invalid Deck Type.')
         self.build_deck(suits, values)
 
-
-    def draw(self):
+    def draw(self, n=1):
         """ Private method to build the deck given mode"""
-        drawn = self.deck[0]
-        self.deck = self.deck[1:]
+        drawn = self.deck[:n]
+        self.deck = self.deck[n:]
         return drawn
        
     def shuffle(self):
