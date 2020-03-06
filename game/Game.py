@@ -1,7 +1,7 @@
 import Field
 
 
-class Game(Field):
+class Game:
     """
     Abstract class for multi-agent, semi-turn-based games. In a
     semi-turn-based play, play begins with a player 1 committing action towards
@@ -22,7 +22,6 @@ class Game(Field):
     """
 
     def __init__(self):
-        super().__init__()
         pass
 
     def get_init_field(self):
@@ -31,7 +30,9 @@ class Game(Field):
             startField: a representation of the field (ideally this is the form
             that will be the input to your neural network)
         """
-        pass def getFieldSize(self):
+        pass 
+
+    def getFieldSize(self):
         """
         Returns:
             Originally returns (x,y): a tuple of dimensions
@@ -81,7 +82,7 @@ class Game(Field):
             (who has lost)
         """
         pass
-
+    def game():
     # I'm pretty sure this canonical form isn't something we need
     # def getCanonicalForm(self, field, *players):
         """

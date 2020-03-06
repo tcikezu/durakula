@@ -1,15 +1,14 @@
 import Numpy as np 
 from pytorch_classification.utils import Bar, AverageMeter
 import time
-import Game
 
 
-class Arena(Game):
+class Arena:
     """
     An Arena class where any number of agents can be pit against each other.
     """
 
-    def __init__(self, pDefend, *pAttack):
+    def __init__(self, pDefend, *pAttack, game):
         """
         Input:
             Players: A list of player functions, each of which takes board
@@ -18,12 +17,12 @@ class Arena(Game):
             I'm considering making each player, a callable Class (ie, a
             function with a property like 'attacking'.)
         """
-        super().__init__()
 
         # Still unsure as to how we should set variables here. 
         self.pDefend = pDefend
         self.pAttack = pAttack
         self.N = len(pAttack) + 1
+        self.game = game
 
     def playGame(self, verbose=False):
         """
