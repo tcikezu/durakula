@@ -1,3 +1,6 @@
+"""
+game.py
+"""
 import Field
 
 
@@ -24,7 +27,7 @@ class Game:
     def __init__(self):
         pass
 
-    def get_init_field(self):
+    def getInitField(self):
         """
         Returns:
             startField: a representation of the field (ideally this is the form
@@ -82,7 +85,6 @@ class Game:
             (who has lost)
         """
         pass
-    def game():
     # I'm pretty sure this canonical form isn't something we need
     # def getCanonicalForm(self, field, *players):
         """

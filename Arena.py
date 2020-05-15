@@ -1,7 +1,6 @@
-import Numpy as np 
+import numpy as np 
 from pytorch_classification.utils import Bar, AverageMeter
 import time
-
 
 class Arena:
     """
@@ -35,7 +34,7 @@ class Arena:
             or
                 draw result returned from the game that is neither (1 ... N)
         """
-
+        
     def playGames(self, num, verbose=False):
         """
         Plays num games, where player starts an equal number of games
