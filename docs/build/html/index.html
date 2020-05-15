@@ -1,17 +1,17 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Welcome to durakula’s documentation! &#8212; durakula 1/27/2020 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -30,54 +30,200 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-Card">
-<span id="welcome-to-durakula-s-documentation"></span><h1>Welcome to durakula’s documentation!<a class="headerlink" href="#module-Card" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="card-py">
-<h2>Card.py<a class="headerlink" href="#card-py" title="Permalink to this headline">¶</a></h2>
-<p>Card Module.</p>
-<dl class="class">
-<dt id="Card.Card">
-<em class="property">class </em><code class="sig-prename descclassname">Card.</code><code class="sig-name descname">Card</code><span class="sig-paren">(</span><em class="sig-param">suit</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#Card.Card" title="Permalink to this definition">¶</a></dt>
-<dd><p>Card class</p>
+  <div class="section" id="welcome-to-durakula-s-documentation">
+<h1>Welcome to durakula’s documentation!<a class="headerlink" href="#welcome-to-durakula-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-Cards">
+<span id="the-cards-module"></span><h2>The <code class="docutils literal notranslate"><span class="pre">Cards</span></code> module<a class="headerlink" href="#module-Cards" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="Cards.CardCollection">
+<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">CardCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suits</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">n_vals</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">fill</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="Cards.Deck">
+<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">Deck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'small'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Cards.CardCollection" title="Cards.CardCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cards.CardCollection</span></code></a></p>
+<dl class="py method">
+<dt id="Cards.Deck.draw">
+<code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
-<dl class="class">
-<dt id="Deck.Deck">
-<em class="property">class </em><code class="sig-prename descclassname">Deck.</code><code class="sig-name descname">Deck</code><span class="sig-paren">(</span><em class="sig-param">mode='full'</em><span class="sig-paren">)</span><a class="headerlink" href="#Deck.Deck" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deck class</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mode</strong> – A string to set the length of starting deck. This is either ‘full’ or
-‘small’.</p>
+<div class="section" id="the-game-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Game</span></code> class<a class="headerlink" href="#the-game-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="Game.Game">
+<em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">Game</code><a class="headerlink" href="#Game.Game" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract class for multi-agent, semi-turn-based games. In a
+semi-turn-based play, play begins with a player 1 committing action towards
+player 2. 2 can then respond. Depending on 2’s response, play may then open
+to allow players 1, 3, …, N to respond back.</p>
+<p>Basically, in this form of turn-based game, player “1” may increase to
+include all other players. So the one addition this Game class has to
+normal turn-based Game classes, is a method “addPlayers”, which increases
+the number of players in self.player1.</p>
+<p>Use 1 for player 1, -1 for player 2, and 0 for all non-participating
+players.</p>
+<p>Something I don’t fully understand is why they didn’t just inherit from
+board?</p>
+<dl class="py method">
+<dt id="Game.Game.getActionSize">
+<code class="sig-name descname">getActionSize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getActionSize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>number of all possible actions</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>actionSize</p>
 </dd>
 </dl>
-<dl class="method">
-<dt id="Deck.Deck._get_cards">
-<code class="sig-name descname">_get_cards</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Deck.Deck._get_cards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Private method to build the deck given mode</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="Deck.Deck.build_deck">
-<code class="sig-name descname">build_deck</code><span class="sig-paren">(</span><em class="sig-param">suits</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#Deck.Deck.build_deck" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method which adds Card objects to deck, to create a complete deck of our Deck object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Deck.Deck.set_mode">
-<code class="sig-name descname">set_mode</code><span class="sig-paren">(</span><em class="sig-param">mode</em><span class="sig-paren">)</span><a class="headerlink" href="#Deck.Deck.set_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the mode of the deck.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – ‘full’ or ‘small’. Corresponds to playing with 52 cards or cards above 5 in value (of every suit).</p>
+<dl class="py method">
+<dt id="Game.Game.getFieldSize">
+<code class="sig-name descname">getFieldSize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getFieldSize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a tuple of dimensions
+Now: returns number of cards on the field?
+Or maybe we can return number of <a href="#id1"><span class="problematic" id="id2">`</span></a>active’ cards</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Originally returns (x,y)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.Game.getGameEnded">
+<code class="sig-name descname">getGameEnded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getGameEnded" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Input:</dt><dd><p>players: current players</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>0 if game has not ended. 1 if there is only one player remaining
+(who has lost)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>r</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.Game.getInitField">
+<code class="sig-name descname">getInitField</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getInitField" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a representation of the field (ideally this is the form
+that will be the input to your neural network)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>startField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.Game.getNextState">
+<code class="sig-name descname">getNextState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getNextState" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Input:</dt><dd><p>players: current players who can make actions
+action: action taken by current players</p>
+</dd>
+<dt>Returns</dt><dd><p>nextField: field after applying action
+nextPlayer: player(s) who play(s) in the next turn</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.Game.getValidMoves">
+<code class="sig-name descname">getValidMoves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.getValidMoves" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Input:</dt><dd><p>players: current player(s)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a binary vector of length self.getActionSize(), 1 for
+moves that are valid from the current board and player, 0 for
+invalid moves</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>validMoves</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.Game.stringRepresentation">
+<code class="sig-name descname">stringRepresentation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.Game.stringRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a quick conversion of the field to a string format.
+Required by MCTS for hashing.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>fieldString</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="the-field-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Field</span></code> class<a class="headerlink" href="#the-field-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="Field.Field">
+<em class="property">class </em><code class="sig-prename descclassname">Field.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trump</span></em>, <em class="sig-param"><span class="n">num_players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="Field.Field.execute_move">
+<code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attack</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field.execute_move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Field.Field.get_legal_moves">
+<code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attack</span></em>, <em class="sig-param"><span class="n">hand</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field.get_legal_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the legal moves, given if in attack or defense,
+and given a hand.
+Moves are CardCollections (4x13 arrays).
+If legal, equals 1.
+If illegal, equals 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Field.Field.has_legal_moves">
+<code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attack</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field.has_legal_moves" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Field.Field.list_moves">
+<code class="sig-name descname">list_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">card_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field.list_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a list of possible moves (4,13), given the mask move_array and
+# of cards per card value, card_count (1,13)</p>
+<p>if card_count is None, then we don’t require a certain number of a card
+value to be included in the list of moves</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Field.Field.to_string">
+<code class="sig-name descname">to_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.Field.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>to be returned by ‘stringRepresentation’ in game class</p>
 </dd></dl>
 
 </dd></dl>
 
 <div class="toctree-wrapper compound">
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -123,7 +269,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -140,7 +286,7 @@
       &copy;2020, Raphael Eguchi, Clark Ikezu.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

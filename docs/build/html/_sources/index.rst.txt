@@ -1,11 +1,25 @@
 Welcome to durakula's documentation!
 ====================================
-.. automodule:: Card
+The ``Cards`` module
+**********************
+.. automodule:: Cards
     :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Deck.Deck
+The ``Game`` class
+**********************
+.. autoclass:: Game.Game
     :members:
-    :private-members:
+    :undoc-members:
+    :show-inheritance:
+
+The ``Field`` class
+*********************
+.. autoclass:: Field.Field
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 .. toctree:: 
    :maxdepth: 2
