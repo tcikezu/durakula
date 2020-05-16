@@ -1,27 +1,12 @@
-"""
-game.py
-"""
-import Field
-
+import numpy as np
+from random import choice
+from Field import DurakField
+from Cards import Deck
+from Agent import DurakPlayer
 
 class Game:
     """
-    Abstract class for multi-agent, semi-turn-based games. In a
-    semi-turn-based play, play begins with a player 1 committing action towards
-    player 2. 2 can then respond. Depending on 2's response, play may then open
-    to allow players 1, 3, ..., N to respond back.
-
-    Basically, in this form of turn-based game, player "1" may increase to
-    include all other players. So the one addition this Game class has to
-    normal turn-based Game classes, is a method "addPlayers", which increases
-    the number of players in self.player1.
-
-    Use 1 for player 1, -1 for player 2, and 0 for all non-participating
-    players.
-
-    Something I don't fully understand is why they didn't just inherit from
-    board?
-
+    Abstract class for card game play.
     """
 
     def __init__(self):
@@ -30,21 +15,21 @@ class Game:
     def getInitField(self):
         """
         Returns:
-            startField: a representation of the field (ideally this is the form
+            initField: a representation of the field (ideally this is the form
             that will be the input to your neural network)
-        """
-        pass 
-
-    def getFieldSize(self):
-        """
-        Returns:
-            Originally returns (x,y): a tuple of dimensions
-            Now: returns number of cards on the field? 
-            Or maybe we can return number of `active' cards
         """
         pass
 
-    def getActionSize(self):
+    # def getFieldSize(self):
+    #     """
+    #     Returns:
+    #         Originally returns (x,y): a tuple of dimensions
+    #         Now: returns number of cards on the field?
+    #         Or maybe we can return number of `active' cards
+    #     """
+    #     pass
+
+    def getActionSize(self, player):
         """
         Returns:
             actionSize: number of all possible actions
@@ -85,38 +70,48 @@ class Game:
             (who has lost)
         """
         pass
-    # I'm pretty sure this canonical form isn't something we need
-    # def getCanonicalForm(self, field, *players):
-        """
-        Input:
-            player: current player (1, 2, ..., N)
 
-        Returns:
-            canonicalField: returns canonical form of field. The canonical form
-            should be independent of player. For e.g., in chess, field would be
-            a board, and the canonical form can be chosen to be from the pov of
-            white. When teh player is white, we can return board as is. When
-            the player is black, we can invert the colors and return the
-            board.
-        """
-    #    pass
+    # def stringRepresentation(self):
+    #     """
+    #     Returns:
+    #         fieldString: a quick conversion of the field to a string format.
+    #         Required by MCTS for hashing.
+    #     """
+    #     return self.__str__()
 
-    # def getSymmetries(self, field, pi):
-        """
-        Input:
-            pi: policy vector of size self.getActionSize()
+class DurakGame(Game):
+    """ Note -- where the agents are called players, assume that
+    they are agents that users can play as.
+    """
+    def __init__(self, numPlayers: int, deckMode: str) -> None:
+        self.numPlayers = numPlayers
+        self.deck = Deck(mode=deckMode)
+        self.players = []
+        self.playingField = None
+        self.initField = None
 
-        Returns:
-            symmForms: a list of [(field, pi)] where each tuple is a
-            symmetrical form of the field and the corresponding pi vector. This
-            is used when training the neural network from examples.
-        """
-    #    pass
+        # Unsure if we want to begin game upon game construction.
+        # Maybe we want to call this externally.
+        self.beginGame()
 
-    def stringRepresentation(self):
-        """
-        Returns:
-            fieldString: a quick conversion of the field to a string format.
-            Required by MCTS for hashing.
-        """
-        return self.__str__()
+    def beginGame(self):
+        # Initialize the players
+        for i in range(self.numPlayers):
+            self.players += [DurakPlayer(self.deck)]
+
+        # Initialize the players' hands.
+        for id in range(self.numPlayers*6):
+            self.players[id % self.numPlayers].drawHand(self.deck, 1)
+
+        # Choose a trump suit
+        trumpSuit = choice(range(self.deck.n_suits))
+
+        # Initialize the Field
+        self.playingField = DurakField(trumpSuit, self.deck, self.players)
+        self.initField = self.playingField
+
+    def getInitField(self):
+        return self.initField
+
+    def getActionSize(self, playerID):
+        return len(self.Field.get_legal_moves(playerID))
