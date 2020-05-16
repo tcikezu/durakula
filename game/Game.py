@@ -80,8 +80,8 @@ class Game:
     #     return self.__str__()
 
 class DurakGame(Game):
-    """ Note -- where the agents are called players, assume that
-    they are agents that users can play as.
+    """ Implement state machine for game of Durak. Note, the agents here are
+    called players since we haven't implemented AI Agents (yet).
     """
     def __init__(self, numPlayers: int, deckMode: str) -> None:
         self.numPlayers = numPlayers
@@ -111,7 +111,13 @@ class DurakGame(Game):
         self.initField = self.playingField
 
     def getInitField(self):
+        """ Initial Field """
         return self.initField
 
     def getActionSize(self, playerID):
+        """ available actions given player
+
+        :param playerID: input player
+        :type playerID: int
+        """
         return len(self.Field.get_legal_moves(playerID))

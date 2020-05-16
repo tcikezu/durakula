@@ -31,6 +31,7 @@ class CardCollection:
 
 
 class Deck(CardCollection):
+    """ Create a card collection, in either small or full mode"""
     def __init__(self, mode='small'):
         self.mode = mode
         self.n_suits = None
@@ -47,6 +48,7 @@ class Deck(CardCollection):
             self.n_vals = 9
 
     def empty(self):
+        """ Empty this deck. """
         self.cards *= 0
 
     def draw(self, n=1):

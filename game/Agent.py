@@ -8,6 +8,7 @@ class Agent:
         pass
 
 class DurakPlayer(Agent):
+    """ All a durak player needs is a hand"""
     def __init__(self, deck):
         # Always initialize with an empty deck
         # I.e., create an empty Deck object of same mode as deck
@@ -15,4 +16,11 @@ class DurakPlayer(Agent):
         self.hand.empty()
 
     def drawHand(self, deck, numCards):
+        """ Draw variable number of cards from a deck
+
+        :param deck: deck to draw from
+        :type deck: Deck
+        :param numCards: number of cards to draw
+        :type numCards: int
+        """
         self.hand.cards += deck.draw(numCards)

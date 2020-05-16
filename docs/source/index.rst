@@ -7,16 +7,23 @@ The ``Cards`` module
     :undoc-members:
     :show-inheritance:
 
-The ``Game`` class
+The ``DurakGame`` class
 **********************
-.. autoclass:: Game.Game
+.. autoclass:: Game.DurakGame
     :members:
     :undoc-members:
     :show-inheritance:
 
-The ``Field`` class
-*********************
-.. autoclass:: Field.Field
+The ``DurakField`` class
+**********************
+.. autoclass:: Field.DurakField
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+The ``DurakPlayer`` class
+**********************
+.. autoclass:: Agent.DurakPlayer
     :members:
     :undoc-members:
     :show-inheritance:

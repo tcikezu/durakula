@@ -23,12 +23,18 @@ class Field:
     # 	""" Generator expression for incrementing moves """
 
 class DurakField(Field):
+    """ Playing field for game of Durak.
+
+    :param trump: the trump suit
+    :type trump: int
+    :param deck: the starting deck
+    :type deck: Deck
+    :param players: list of players
+    :type players: list(DurakPlayer)
+    """
     # Might be useful to convert this into **kwargs
     def __init__(self, trump, deck, players):
-        """
-        Durak is characterized by a trump suit, and # of players.
-        Attributes:
-        """
+
         self.numPlayers = len(players)
         self.players = players # list of Agent class objects
         self.cards = [player.hand.cards for player in players] # list of ndarrays
@@ -36,6 +42,7 @@ class DurakField(Field):
         self.fieldDeck = deck
         self.garbage = Deck(mode=deck.mode)
         self.garbage.empty()
+        self.bottomCard = None
 
         # self.trump = trump      # pretty sure we'll need the trump index later
         #
@@ -49,12 +56,7 @@ class DurakField(Field):
         # self.trash = CardCollection()
 
     def __str__(self):
-        """ to be returned by 'stringRepresentation' in game class """
-
-        # Pseudocode:
-        # All the cards on the field are (attack, defend) tuples
-        # Want to join these into a string, while making sure we keep
-        # order of attack,defend pairs
+        """ Output string for Field """
 
         head = '--- Playing Field ---\n'
         deck_str = 'Field Deck: \n' + str(self.fieldDeck) + '\n'
@@ -64,12 +66,12 @@ class DurakField(Field):
         return head + deck_str + ''.join(player_list) + trump_str + tail
 
     def get_legal_moves(self, player, attack, hand):
-        """ Returns all the legal moves, given if in attack or defense,
-        and given a hand.
-        Moves are CardCollections (4x13 arrays).
-        If legal, equals 1.
-        If illegal, equals 0.
-        """
+        # """ Returns all the legal moves, given if in attack or defense,
+        # and given a hand.
+        # Moves are CardCollections (4x13 arrays).
+        # If legal, equals 1.
+        # If illegal, equals 0.
+        # """
 
         ## question :: are we okay with players getting sequential turns?
 
@@ -104,11 +106,11 @@ class DurakField(Field):
 
 
     def list_moves(self, move_array, card_count = None):
-        """ create a list of possible moves (4,13), given the mask move_array and
-        # of cards per card value, card_count (1,13)
-
-        if card_count is None, then we don't require a certain number of a card
-        value to be included in the list of moves"""
+        # """ create a list of possible moves (4,13), given the mask move_array and
+        # # of cards per card value, card_count (1,13)
+        #
+        # if card_count is None, then we don't require a certain number of a card
+        # value to be included in the list of moves"""
         all_moves = []
         if card_count is None:
             move_list = np.argwhere(move_list > 0)
