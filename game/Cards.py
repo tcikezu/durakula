@@ -41,20 +41,22 @@ class Deck(CardCollection):
         self._apply_mode()
         super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
 
-        self.order = deque(range(np.size(self.cards)))
+        self.order = deque([i for i,_ in np.ndenumerate(self.cards)])
     
     def __getitem__(self, idx):
         if self.mode == 'full':
-            return _CARD_MAP_FULL[self.order[idx] // self.n_vals, self.order[idx] % self.n_vals]
+            return _CARD_MAP_FULL[self.order[idx]]
+            # return self.cards[self.order[idx]]
         elif self.mode == 'small':
-            return _CARD_MAP_SMALL[self.order[idx] // self.n_vals, self.order[idx] % self.n_vals]
+            return _CARD_MAP_SMALL[self.order[idx]]
+            # return self.cards[self.order[idx]]
         else:
             return 'Invalid mode'
 
     def __setitem__(self, idx, value):
-        self.cards[self.order[idx] // self.n_vals, self.order[idx] % self.n_vals] = value
+        self.cards[self.order[idx]] = value
         if value == 1:
-            self.order.append(self.order[idx])
+            self.order.appendleft(self.order[idx])
         elif value == 0:
             self.order.remove(self.order[idx])
         else:
@@ -72,10 +74,10 @@ class Deck(CardCollection):
         pass
 
     def suit(self, idx):
-        return _SUITS[self.order[idx] // self.n_vals]
+        return _SUITS[self.order[idx][0]]
     
     def value(self, idx):
-        return _VALUES[self.order[idx] & self.n_vals]
+        return _VALUES[self.order[idx][1]]
 
     def _apply_mode(self):
         if self.mode == 'full':
@@ -95,7 +97,7 @@ class Deck(CardCollection):
         random.shuffle(self.order)
 
     def drawCard(self,n=1):
-        """Draw according to an order."""
+        """Draw (ie, pop) according to an order."""
         
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = Deck(mode = self.mode)
@@ -103,14 +105,21 @@ class Deck(CardCollection):
         for i in range(n):
             idx = self.order[0]
             self.__setitem__(0, 0)
-            #drawn_card[idx // self.n_vals, idx % self.n_vals] = 1
-            drawn_card.cards[idx // self.n_vals, idx % self.n_vals] = 1
-            drawn_card.order.append(idx)
+            drawn_card.cards[idx] = 1
+            drawn_card.order.appendleft(idx)
         return drawn_card
 
-    def addCard(self, cards):
-        self.cards = cards
-        self.order.append([idx for idx,val in cards.flatten() if val == 1]) 
+    # idx notation confusing -- here it means the specific card
+    # but in other cases idx refers to a position in self.order
+    def addCard(self, idx):
+        self.cards[idx] = 1
+        self.order.appendleft(idx) 
+        return self
+    
+    def removeCard(self, idx=0):
+        self.cards[idx] = 0
+        self.order.removeleft(idx)
+        return self
 
     def draw(self, n=1):
         """Draw a random card. Assume we're just shuffling and drawing from top."""

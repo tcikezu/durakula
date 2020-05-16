@@ -14,6 +14,7 @@ class DurakPlayer(Agent):
         # Always initialize with an empty deck
         # I.e., create an empty Deck object of same mode as deck
         self.hand = Deck(mode=deck.mode).empty()
+        self.mode = 'waiting'
 
     def drawHand(self, deck, numCards):
         """ Draw variable number of cards from a deck
@@ -24,3 +25,9 @@ class DurakPlayer(Agent):
         :type numCards: int
         """
         self.hand += deck.drawCard(numCards)
+
+    def attack(self):
+        self.mode = 'attack'
+
+    def defend(self):
+        self.mode = 'defend'

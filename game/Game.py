@@ -121,3 +121,6 @@ class DurakGame(Game):
         :type playerID: int
         """
         return len(self.Field.get_legal_moves(playerID))
+    
+    def getGameEnded(self):
+        return sum([len(player.hands) == 0 for player in self.players]) == self.numPlayers - 1
