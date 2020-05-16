@@ -23,7 +23,7 @@ class Field:
     # 	""" Generator expression for incrementing moves """
 
 class DurakField(Field):
-    """ Playing field for game of Durak.
+    """ Maintains deck in middle of table, and each player's hands.
 
     :param trump: the trump suit
     :type trump: int
@@ -33,16 +33,16 @@ class DurakField(Field):
     :type players: list(DurakPlayer)
     """
     # Might be useful to convert this into **kwargs
-    def __init__(self, trump, deck, players):
+    def __init__(self, deck, players):
 
         self.numPlayers = len(players)
         self.players = players # list of Agent class objects
         self.cards = [player.hand.cards for player in players] # list of ndarrays
-        self.trumpSuit = trump
-        self.fieldDeck = deck
-        self.garbage = Deck(mode=deck.mode)
-        self.garbage.empty()
-        self.bottomCard = None
+        self.drawingDeck = deck
+        self.fieldDeck = Deck(mode=deck.mode).empty()
+        self.garbage = Deck(mode=deck.mode).empty()
+        self.bottomCard = self.drawingDeck[-1]
+        self.trumpSuit = self.drawingDeck.suit(-1)
 
         # self.trump = trump      # pretty sure we'll need the trump index later
         #
@@ -59,17 +59,18 @@ class DurakField(Field):
         """ Output string for Field """
 
         head = '--- Playing Field ---\n'
-        deck_str = 'Field Deck: \n' + str(self.fieldDeck) + '\n'
+        drawingdeck_str = 'Drawing Deck: ' + str(self.drawingDeck) + '\n'
+        fielddeck_str = 'Field Deck: ' + str(self.fieldDeck) + '\n'
         player_list = [f'Player {i!r}:' + str(self.players[i].hand) +'\n' for i in range(self.numPlayers)]
-        trump_str = 'Trump suit is ' + str(Cards._SUITS[self.trumpSuit]) + '\n'
+        trump_str = 'Trump suit is ' + self.trumpSuit + '\n'
         tail = '---------------------\n'
-        return head + deck_str + ''.join(player_list) + trump_str + tail
+        return head + drawingdeck_str + fielddeck_str + ''.join(player_list) + trump_str + tail
 
     def get_legal_moves(self, player, attack, hand):
         # """ Returns all the legal moves, given if in attack or defense,
         # and given a hand.
         # Moves are CardCollections (4x13 arrays).
-        # If legal, equals 1.
+        # If legal, equals 1.fieldDeck
         # If illegal, equals 0.
         # """
 

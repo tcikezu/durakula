@@ -7,13 +7,13 @@ class Agent:
         """ perform some action? ask to perform some action? """
         pass
 
+# DurakPlayer a collection?
 class DurakPlayer(Agent):
     """ All a durak player needs is a hand"""
     def __init__(self, deck):
         # Always initialize with an empty deck
         # I.e., create an empty Deck object of same mode as deck
-        self.hand = Deck(mode=deck.mode)
-        self.hand.empty()
+        self.hand = Deck(mode=deck.mode).empty()
 
     def drawHand(self, deck, numCards):
         """ Draw variable number of cards from a deck
@@ -23,4 +23,4 @@ class DurakPlayer(Agent):
         :param numCards: number of cards to draw
         :type numCards: int
         """
-        self.hand.cards += deck.draw(numCards)
+        self.hand += deck.drawCard(numCards)

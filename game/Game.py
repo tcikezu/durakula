@@ -80,7 +80,7 @@ class Game:
     #     return self.__str__()
 
 class DurakGame(Game):
-    """ Implement state machine for game of Durak. Note, the agents here are
+    """ State machine for game of Durak. Note, the agents here are
     called players since we haven't implemented AI Agents (yet).
     """
     def __init__(self, numPlayers: int, deckMode: str) -> None:
@@ -99,15 +99,15 @@ class DurakGame(Game):
         for i in range(self.numPlayers):
             self.players += [DurakPlayer(self.deck)]
 
-        # Initialize the players' hands.
-        for id in range(self.numPlayers*6):
-            self.players[id % self.numPlayers].drawHand(self.deck, 1)
+        # Shuffle the deck.
+        self.deck.shuffle()
 
-        # Choose a trump suit
-        trumpSuit = choice(range(self.deck.n_suits))
+        # Initialize the players' hands.
+        for id in range(self.numPlayers):
+            self.players[id % self.numPlayers].drawHand(self.deck, 6)
 
         # Initialize the Field
-        self.playingField = DurakField(trumpSuit, self.deck, self.players)
+        self.playingField = DurakField(self.deck, self.players)
         self.initField = self.playingField
 
     def getInitField(self):
