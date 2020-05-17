@@ -43,13 +43,9 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
- | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
- | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
- | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
@@ -57,7 +53,7 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Cards.CardCollection.addCard">addCard() (Cards.CardCollection method)</a>
+      <li><a href="index.html#Cards.CardCollection.add_card">add_card() (Cards.CardCollection method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -69,7 +65,7 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.beginGame">beginGame() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakGame.begin_game">begin_game() (Game.DurakGame method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -96,14 +92,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#Cards.Deck">Deck (class in Cards)</a>
 </li>
-      <li><a href="index.html#Game.DurakGame.deck">deck (Game.DurakGame attribute)</a>
-</li>
       <li><a href="index.html#Agent.DurakPlayer.defend">defend() (Agent.DurakPlayer method)</a>
+</li>
+      <li><a href="index.html#Cards.CardCollection.draw_card">draw_card() (Cards.CardCollection method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Cards.CardCollection.drawCard">drawCard() (Cards.CardCollection method)</a>
-</li>
       <li><a href="index.html#Field.DurakField">DurakField (class in Field)</a>
 </li>
       <li><a href="index.html#Game.DurakGame">DurakGame (class in Game)</a>
@@ -128,7 +122,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.field">field (Field.DurakField attribute)</a>
+      <li><a href="index.html#Field.DurakField.fieldIsEmpty">fieldIsEmpty() (Field.DurakField method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -140,19 +134,19 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.get_legal_moves">get_legal_moves() (Field.DurakField method)</a>
+      <li><a href="index.html#Game.DurakGame.get_action_size">get_action_size() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Game.DurakGame.getActionSize">getActionSize() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakGame.get_deck_from_hand">get_deck_from_hand() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Game.DurakGame.getDeckFromHand">getDeckFromHand() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakGame.get_game_ended">get_game_ended() (Game.DurakGame method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.getGameEnded">getGameEnded() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakGame.get_hand_from_deck">get_hand_from_deck() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Game.DurakGame.getHandFromDeck">getHandFromDeck() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakGame.get_init_field">get_init_field() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Game.DurakGame.getInitfield">getInitfield() (Game.DurakGame method)</a>
+      <li><a href="index.html#Field.DurakField.get_legal_moves">get_legal_moves() (Field.DurakField method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -161,14 +155,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#Field.DurakField.has_legal_moves">has_legal_moves() (Field.DurakField method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.list_moves">list_moves() (Field.DurakField method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -186,30 +172,10 @@
   </ul></td>
 </tr></table>
 
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.n_players">n_players (Game.DurakGame attribute)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="P">P</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.players">players (Game.DurakGame attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.playing_field">playing_field (Game.DurakGame attribute)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Cards.CardCollection.removeCard">removeCard() (Cards.CardCollection method)</a>
+      <li><a href="index.html#Cards.CardCollection.remove_card">remove_card() (Cards.CardCollection method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -222,18 +188,6 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#Cards.CardCollection.suit">suit() (Cards.CardCollection method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="T">T</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.trump_idx">trump_idx (Game.DurakGame attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.trump_suit">trump_suit (Game.DurakGame attribute)</a>
 </li>
   </ul></td>
 </tr></table>

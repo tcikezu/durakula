@@ -23,6 +23,7 @@ class DurakPlayer(Agent):
         self.mode = 'defend'
 
     def finish(self):
+        assert(np.sum(self.hand) == 0)
         self.mode = 'finished'
 
     def wait(self):

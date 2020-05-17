@@ -92,7 +92,7 @@ class CardCollection:
     def shuffle(self):
         random.shuffle(self.order)
 
-    def drawCard(self,n=1):
+    def draw_card(self,n=1):
         """Draw (ie, pop) according to an order."""
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = Deck(mode = self.mode)
@@ -106,18 +106,18 @@ class CardCollection:
 
     # idx notation confusing -- here it means the specific card
     # but in other cases idx refers to a position in self.order
-    def addCard(self, idx):
+    def add_card(self, idx):
         self.cards[idx] = 1
         self.order.appendleft(idx)
         return self
 
-    def removeCard(self, idx=0):
+    def remove_card(self, idx=0):
         self.cards[idx] = 0
         self.order.removeleft(idx)
         return self
 
 class Deck(CardCollection):
-    """ Create a card collection, in either small or full mode"""
+    """Create a card collection, in either small or full mode."""
     def __init__(self, mode='small'):
         self.mode = mode
         self.n_suits = None

@@ -13,11 +13,10 @@ class Game:
     def __init__(self):
         pass
 
-    def getinit_field(self):
+    def get_init_field(self):
         """
         Returns:
-            init_field: a representation of the field (ideally this is the form
-            that will be the input to your neural network)
+            init_field: a representation of the field (ideally this is the form that will be the input to your neural network)
         """
         pass
 
@@ -30,14 +29,14 @@ class Game:
     #     """
     #     pass
 
-    def getActionSize(self, player):
+    def get_action_size(self, player):
         """
         Returns:
             actionSize: number of all possible actions
         """
         pass
 
-    def getNextState(self, action, player):
+    def get_next_state(self, action, player):
         """
         Input:
             players: current players who can make actions
@@ -49,26 +48,23 @@ class Game:
         """
         pass
 
-    def getValidMoves(self, player):
+    def get_valid_moves(self, player):
         """
         Input:
             players: current player(s)
 
         Returns:
-            validMoves: a binary vector of length self.getActionSize(), 1 for
-            moves that are valid from the current board and player, 0 for
-            invalid moves
+            validMoves: a binary vector of length self.get_action_size(), 1 for moves that are valid from the current board and player, 0 for invalid moves
         """
         pass
 
-    def getGameEnded(self, player):
+    def get_game_ended(self, player):
         """
         Input:
             players: current players
 
         Returns:
-            r: 0 if game has not ended. 1 if there is only one player remaining
-            (who has lost)
+            r: 0 if game has not ended. 1 if there is only one player remaining (who has lost)
         """
         pass
 
@@ -81,21 +77,7 @@ class Game:
     #     return self.__str__()
 
 class DurakGame(Game):
-    """ State machine for game of Durak.
-
-    Args:
-        n_players (int): The number of players playing a game of Durak.
-
-        deckMode (str): This is either `full' or `small`.
-
-    Attributes:
-        n_players (int): The number of players playing a game of Durak.
-        deck (Deck): The deck we're playing with
-        players (list): A list of :class:`Agent.DurakPlayer` objects.
-        playing_field (Field.DurakField): The playing field which contains rules for game-play.
-        trump_suit (string): The selected trump suit.
-        trump_idx (int): index for selected trump suit.
-    """
+    """State machine for game of Durak."""
     def __init__(self, n_players: int, deckMode: str) -> None:
         self.n_players = n_players
         self.deck = Deck(mode=deckMode)
@@ -107,24 +89,27 @@ class DurakGame(Game):
 
         # Unsure if we want to begin game upon game construction.
         # Maybe we want to call this externally.
-        self.beginGame()
+        self.begin_game()
 
-    def getHandFromDeck(self, deck: Deck) -> np.ndarray:
-        """ Convert a deck into a "hand", which is a 2d np.ndarray
-        whose first row is always trump suit.
+    def get_hand_from_deck(self, deck: Deck) -> np.ndarray:
+        """Convert a deck into a "hand", which is a 2d np.ndarray whose first row is always trump suit.
 
-        Input:
-            deck (Deck): The deck from which we get our hand
+        Args:
+            deck (Deck): A `Deck` instance.
+        Returns:
+            hand (np.ndarray): An deck.n_suit by deck.n_val np.ndarray
         """
         indices = list(range(deck.n_suits))
         indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
         return deck.cards[indices]
 
-    def getDeckFromHand(self, hand: np.ndarray) -> Deck:
-        """ Convert a hand into a deck object.
+    def get_deck_from_hand(self, hand: np.ndarray) -> Deck:
+        """Convert a hand into a deck object.
 
-        Input:
-            hand (np.ndarray): The hand whose first row corresponds to trump suit
+        Args:
+            hand (np.ndarray): An n_suit by n_val array.
+        Returns:
+            deck (Deck): A `Deck` instance, populated with cards inside the hand.
         """
         indices = list(range(hand.shape[0]))
         indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
@@ -139,7 +124,8 @@ class DurakGame(Game):
         deck.order = deque([i for i, v in np.ndenumerate(deck.cards) if v == 1])
         return deck
 
-    def beginGame(self):
+    def begin_game(self):
+        """Deck is first shuffled, then 6 cards are dealt to each of the players. Finally the game's `Field` object is initialized."""
         # Shuffle the deck.
         self.deck.shuffle()
 
@@ -149,25 +135,26 @@ class DurakGame(Game):
 
         # Initialize the players.
         for i in range(self.n_players):
-            hand = self.getHandFromDeck(self.deck.drawCard(6))
+            hand = self.get_hand_from_deck(self.deck.drawCard(6))
             self.players += [DurakPlayer(hand)]
 
         # Initialize the Field
         self.playing_field = DurakField(self.deck, self.players)
         self.init_field = self.playing_field
 
-    def getInitfield(self):
-        """ Initial Field """
+    def get_init_field(self):
+        """Initial Field"""
         return self.init_field
 
-    def getActionSize(self, playerID):
-        """ available actions given player
+    def get_action_size(self, playerID):
+        """Available actions given player
 
         Args:
             playerID (int): index for player
         """
         return len(self.Field.get_legal_moves(playerID))
 
-    def getGameEnded(self):
+    def get_game_ended(self):
         """ Will return True when game is over. """
-        return sum([len(player.deck) == 0 for player in self.players]) == self.n_players - 1
+        return sum([player.mode == 'finished' for player in self.players]) ==\
+                                                            self.n_players - 1

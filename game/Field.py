@@ -26,23 +26,10 @@ class Field:
     # 	""" Generator expression for incrementing moves """
 
 class DurakField(Field):
-    """ This class defines legal moves you can make in a game of Durak, given
-    every players' hands and the current cards played on the field.
-
-    Input:
-        deck (Deck): A deck that is optionally the deck from which we draw all values.
-
-        players (list): A list of :class:`Agent.DurakPlayer` objects
-
-    Attributes:
-        field (np.ndarray): The 'table' in N x N form, where N is the total number of cards
-    in the initial deck. The columns correspond to attacks, and rows correspond to
-    defends, for each attack.
-
-
-    """
+    """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
     # Might be useful to convert this into **kwargs
     def __init__(self, deck, players):
+        """Inits DurakField with deck and players."""
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
         self.drawing_deck = deck
@@ -73,7 +60,7 @@ class DurakField(Field):
         # self.battle_mask[trump,:] = 1
 
     def __str__(self):
-        """ Output string for Field """
+        """Output string for Field/"""
 
         head = '--- Playing Field ---\n'
         drawing_deck_str = 'Drawing Deck: ' + str(self.drawing_deck) + '\n'
@@ -85,7 +72,8 @@ class DurakField(Field):
     def fieldIsEmpty(self):
         return np.sum(self.field).astype('int') == 0
 
-    def get_legal_moves(self, playerID):
+    def get_legal_moves(self, playerID: int):
+        """Return a list of legal moves for the given player."""
         if self.players[playerID].mode == 'defend':
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
@@ -102,8 +90,7 @@ class DurakField(Field):
             return valid_defenses # + ['pass']
 
         elif self.players[playerID].mode == 'attack':
-            # print('attack mode')
-            # Assuming there cards on the field.
+            # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
             if self.fieldIsEmpty():
                 valid_attacks = self.players[playerID].hand
@@ -124,16 +111,11 @@ class DurakField(Field):
     # def list_nonzero_combinations(self, valid_moves):
     #     attack_idxs = np.ndenumerate(valid_moves)
 
-    def has_legal_moves(self, attack):
-        if attack is True:
-            return sum(get_legal_moves(self, attack)) > 0
-        else: return
+    def has_legal_moves(self):
+        pass
 
-    def execute_move(self, attack):
-        if attack is True:
-            pass
-        else:
-            pass
+    def execute_move(self):
+        pass
 
     @staticmethod
     def _increment_move(move):
