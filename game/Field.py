@@ -1,7 +1,4 @@
 import numpy as np
-from Agent import DurakPlayer
-import Cards
-from Cards import Deck
 import copy
 from itertools import combinations
 from math import ceil
@@ -28,10 +25,11 @@ class Field:
 class DurakField(Field):
     """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
     # Might be useful to convert this into **kwargs
-    def __init__(self, deck, players):
+    def __init__(self, deck, hands, players):
         """Inits DurakField with deck and players."""
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
+        self.hands = hands
         self.drawing_deck = deck
         self.n_players = len(players)
         self.players = players # list of Agent class objects
@@ -63,18 +61,18 @@ class DurakField(Field):
         """Output string for Field/"""
 
         head = '--- Playing Field ---\n'
-        drawing_deck_str = 'Drawing Deck: ' + str(self.drawing_deck) + '\n'
-        player_list = [f'Player {i!r}:' + str(self.players[i].hand) +'\n' for i in range(self.n_players)]
+        drawing_deck_str = 'Drawing DurakDeck: ' + str(self.drawing_deck) + '\n'
+        player_str_list = [str(player)+'\n' for player in self.players]
         trump_str = 'Trump suit is ' + self.trump_suit + '\n'
         tail = '---------------------\n'
-        return head + drawing_deck_str + ''.join(player_list) + trump_str + tail
+        return head + drawing_deck_str + ''.join(player_str_list) + trump_str + tail
 
     def field_is_empty(self):
         return np.sum(self.field).astype('int') == 0
 
-    def get_legal_moves(self, playerID: int):
+    def get_legal_moves(self, player_id: int):
         """Return a list of legal moves for the given player."""
-        if self.players[playerID].mode == 'defend':
+        if self.players[player_id].player_mode == 'defend':
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
@@ -86,24 +84,24 @@ class DurakField(Field):
             for att_idx in nontrump_attack_idxs:
                 valid_defenses[:self.n_vals, att_idx] = 1
 
-            valid_defenses *= self.players[playerID].hand.ravel()[:,np.newaxis]
+            valid_defenses *= self.hands[player_id].ravel()[:,np.newaxis]
             return valid_defenses # + ['pass']
 
-        elif self.players[playerID].mode == 'attack':
+        elif self.players[player_id].player_mode == 'attack':
             # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
             if self.field_is_empty():
-                valid_attacks = self.players[playerID].hand
+                valid_attacks = self.hands[player_id]
             else:
                 attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
                 valid_attacks[:,attack_idxs % self.n_vals] = 1
-                valid_attacks *= self.players[playerID].hand
+                valid_attacks *= self.hands[player_id]
 
             return valid_attacks # + ['wait']
 
-        elif mode == 'waiting':
+        elif self.players[player_id].player_mode == 'waiting':
             return ['wait', 'attack']
-        elif mode == 'finished':
+        elif self.players[player_id].player_mode == 'finished':
             return []
         else:
             raise ValueError('INVALID PLAYER MODE: MUST BE ONE OF "attack", "defend", "waiting", "finished"')

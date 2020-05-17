@@ -1,8 +1,6 @@
 import numpy as np
-from random import choice
-from collections import deque
 from Field import DurakField
-from Cards import Deck
+from Cards import DurakDeck
 from Agent import DurakPlayer
 
 class Game:
@@ -68,93 +66,91 @@ class Game:
         """
         pass
 
-    # def stringRepresentation(self):
-    #     """
-    #     Returns:
-    #         fieldString: a quick conversion of the field to a string format.
-    #         Required by MCTS for hashing.
-    #     """
-    #     return self.__str__()
+    def string_representation(self):
+        """
+        Returns:
+            field_string: a quick conversion of the field to a string format.
+            Required by MCTS for hashing.
+        """
+        pass
+
+class DurakHands:
+    def __init__(self, deck, num_players):
+        self.mode = deck.mode
+        self.trump_idx = deck.trump_idx
+        self.trump_suit = deck.trump_suit
+        self.hands = np.zeros((num_players, deck.n_suits, deck.n_vals)).astype(int)
+
+    def __getitem__(self, idx):
+        return self.hands[idx]
+
+    def __setitem__(self, idx, value):
+        self.hands[idx] = value
+
+    # def __eq__(self, other_hands):
+    #     assert(self.hands.shape == other_hands.shape), "Oops! Hands shape mis-match."
+    #     self.hands = other_hands
+
+    def get_hand_from_deck(self, deck: DurakDeck, player_idx: int) -> None:
+        """Create a hand to hands from an input deck.
+
+        Args:
+            deck (DurakDeck): A `DurakDeck` instance.
+            player_idx (int): Player for whom we're creating the hand.
+        """
+        assert(deck.mode == self.mode), "Oops! Invalid deck mode!"
+        indices = list(range(deck.n_suits))
+        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
+        self.hands[player_idx] = deck.cards[indices]
+        return self.hands[player_idx]
 
 class DurakGame(Game):
     """State machine for game of Durak."""
-    def __init__(self, n_players: int, deckMode: str) -> None:
-        self.n_players = n_players
-        self.deck = Deck(mode=deckMode)
+    def __init__(self, n_players: int, deck_mode: str) -> None:
+        # self.n_players = n_players
         self.players = []
         self.playing_field = None
         self.init_field = None
-        self.trump_suit = None
-        self.trump_idx = None
+        self.hands = None
 
         # Unsure if we want to begin game upon game construction.
         # Maybe we want to call this externally.
-        self.begin_game()
+        self.begin_game(n_players, deck_mode)
 
-    def get_hand_from_deck(self, deck: Deck) -> np.ndarray:
-        """Convert a deck into a "hand", which is a 2d np.ndarray whose first row is always trump suit.
-
-        Args:
-            deck (Deck): A `Deck` instance.
-        Returns:
-            hand (np.ndarray): An deck.n_suit by deck.n_val np.ndarray
-        """
-        indices = list(range(deck.n_suits))
-        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        return deck.cards[indices]
-
-    def get_deck_from_hand(self, hand: np.ndarray) -> Deck:
-        """Convert a hand into a deck object.
-
-        Args:
-            hand (np.ndarray): An n_suit by n_val array.
-        Returns:
-            deck (Deck): A `Deck` instance, populated with cards inside the hand.
-        """
-        indices = list(range(hand.shape[0]))
-        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        if hand.size == 52:
-            deck = Deck(mode='full')
-        elif hand.size == 36:
-            deck = Deck(mode='small')
-        else:
-            raise ValueError('INVALID HAND SIZE')
-        deck.empty()
-        deck.cards = hand[indices]
-        deck.order = deque([i for i, v in np.ndenumerate(deck.cards) if v == 1])
-        return deck
-
-    def begin_game(self):
+    def begin_game(self, n_players, deck_mode):
         """Deck is first shuffled, then 6 cards are dealt to each of the players. Finally the game's `Field` object is initialized."""
+        # Create a deck object.
+        deck = DurakDeck(mode=deck_mode)
+
         # Shuffle the deck.
-        self.deck.shuffle()
+        deck.shuffle()
 
-        # Set trump idx
-        self.trump_idx = self.deck.order[-1][0]
-        self.trump_suit = self.deck.suit(-1)
-
-        # Initialize the players.
-        for i in range(self.n_players):
-            hand = self.get_hand_from_deck(self.deck.drawCard(6))
-            self.players += [DurakPlayer(hand)]
+        # Initialize the players and hands
+        self.hands = DurakHands(deck, n_players)
+        for player_id in range(n_players):
+            self.hands.get_hand_from_deck(deck.draw_card(6), player_id)
+            self.players += [DurakPlayer(self.hands[player_id], player_id, deck.trump_idx)]
 
         # Initialize the Field
-        self.playing_field = DurakField(self.deck, self.players)
+        self.playing_field = DurakField(deck, self.hands, self.players)
         self.init_field = self.playing_field
 
     def get_init_field(self):
         """Initial Field"""
         return self.init_field
 
-    def get_action_size(self, playerID):
+    def get_action_size(self, player_id):
         """Available actions given player
 
         Args:
-            playerID (int): index for player
+            player_id (int): index for player
         """
-        return len(self.Field.get_legal_moves(playerID))
+        return len(self.Field.get_legal_moves(player_id))
 
     def get_game_ended(self):
-        """ Will return True when game is over. """
-        return sum([player.mode == 'finished' for player in self.players]) ==\
-                                                            self.n_players - 1
+        """Will return True when game is over."""
+        return sum([player.player_mode == 'finished' for player in self.players]) == len(self.players) - 1
+
+    def string_representation(self):
+        """Print string representation of field."""
+        return str(self.playing_field)
