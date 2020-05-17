@@ -39,15 +39,15 @@ class DurakField(Field):
     def __init__(self, deck, players):
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
-        self.numPlayers = len(players)
+        self.n_players = len(players)
         self.players = players # list of Agent class objects
-        self.drawingDeck = deck
+        self.drawing_deck = deck
         self.garbage = Deck(mode=deck.mode).empty()
-        # self.bottomCard = self.drawingDeck[-1]
-        self.trumpSuit = self.drawingDeck.suit(-1)
-        self.trumpSuitIdx = deck.order[-1][0]
+        # self.bottomCard = self.drawing_deck[-1]
+        self.trump_suit = self.drawing_deck.suit(-1)
+        self.trump_suit_idx = deck.order[-1][0]
 
-        self.playerDurakHands = np.array([p.hand.ravel() for p in self.players])
+        self.player_durak_hands = np.array([p.hand.ravel() for p in self.players])
 
         # field is a N x N array, where N = number of cards
         # columns are attacks
@@ -58,10 +58,10 @@ class DurakField(Field):
         self.attacks = np.zeros_like(deck.cards)
         self.defends = np.zeros_like(deck.cards)
 
-        self.playerOnDefense = np.random.randint(self.numPlayers)
-        self.players[self.playerOnDefense].defend()
-        self.playersOnAttack = [(self.playerOnDefense - 1) % self.numPlayers]
-        self.players[self.playersOnAttack[0]].attack()
+        self.player_on_defense = np.random.randint(self.n_players)
+        self.players[self.player_on_defense].defend()
+        self.players_on_attack = [(self.player_on_defense - 1) % self.n_players]
+        self.players[self.players_on_attack[0]].attack()
 
         # self.battle_mask = CardCollection()
         # self.battle_mask[trump,:] = 1
@@ -70,24 +70,23 @@ class DurakField(Field):
         """ Output string for Field """
 
         head = '--- Playing Field ---\n'
-        drawingdeck_str = 'Drawing Deck: ' + str(self.drawingDeck) + '\n'
-        player_list = [f'Player {i!r}:' + str(self.players[i].hand) +'\n' for i in range(self.numPlayers)]
-        trump_str = 'Trump suit is ' + self.trumpSuit + '\n'
+        drawing_deck_str = 'Drawing Deck: ' + str(self.drawing_deck) + '\n'
+        player_list = [f'Player {i!r}:' + str(self.players[i].hand) +'\n' for i in range(self.n_players)]
+        trump_str = 'Trump suit is ' + self.trump_suit + '\n'
         tail = '---------------------\n'
-        return head + drawingdeck_str + ''.join(player_list) + trump_str + tail
+        return head + drawing_deck_str + ''.join(player_list) + trump_str + tail
 
     def get_legal_moves(self, playerID):
         if self.players[playerID].mode == 'defend':
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
-            trump_attack_idxs = [i for i,v in enumerate(attack_idxs) if v < self.n_vals]
+            nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
             valid_defenses = np.zeros_like(self.field)
-            f = lambda x : ceil(x / self.n_vals)*self.n_vals
+            f = lambda x : (x // self.n_vals + 1)*self.n_vals
 
-            for att_idx in trump_attack_idxs:
-                valid_defenses[att_idx + 1 : f(att_idx), att_idx] = 1
             for att_idx in attack_idxs:
                 valid_defenses[att_idx + 1 : f(att_idx), att_idx] = 1
+            for att_idx in nontrump_attack_idxs:
                 valid_defenses[:self.n_vals, att_idx] = 1
 
             valid_defenses *= self.players[playerID].hand.ravel()[:,np.newaxis]

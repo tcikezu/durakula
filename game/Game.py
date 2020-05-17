@@ -1,5 +1,6 @@
 import numpy as np
 from random import choice
+from collections import deque
 from Field import DurakField
 from Cards import Deck
 from Agent import DurakPlayer
@@ -12,10 +13,10 @@ class Game:
     def __init__(self):
         pass
 
-    def getInitField(self):
+    def getinit_field(self):
         """
         Returns:
-            initField: a representation of the field (ideally this is the form
+            init_field: a representation of the field (ideally this is the form
             that will be the input to your neural network)
         """
         pass
@@ -83,35 +84,69 @@ class DurakGame(Game):
     """ State machine for game of Durak. Note, the agents here are
     called players since we haven't implemented AI Agents (yet).
     """
-    def __init__(self, numPlayers: int, deckMode: str) -> None:
-        self.numPlayers = numPlayers
+    def __init__(self, n_players: int, deckMode: str) -> None:
+        self.n_players = n_players
         self.deck = Deck(mode=deckMode)
         self.players = []
-        self.playingField = None
-        self.initField = None
+        self.playing_field = None
+        self.init_field = None
+        self.trump_suit = None
+        self.trump_idx = None
 
         # Unsure if we want to begin game upon game construction.
         # Maybe we want to call this externally.
         self.beginGame()
 
+    def getHandFromDeck(self, deck: Deck) -> np.ndarray:
+        """ Convert a deck into a "hand", which is a 2d np.ndarray
+        whose first row is always trump suit.
+
+        :param deck: Deck from which we get our hand
+        :type deck: Deck
+        """
+        indices = list(range(deck.n_suits))
+        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
+        return deck.cards[indices]
+
+    def getDeckFromHand(self, hand: np.ndarray) -> Deck:
+        """ Convert a hand into a deck object.
+
+        :param hand: Hand whose first row corresponds to trump suit
+        :type hand: np.ndarray
+        """
+        indices = list(range(hand.shape[0]))
+        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
+        if hand.size == 52:
+            deck = Deck(mode='full')
+        elif hand.size == 36:
+            deck = Deck(mode='small')
+        else:
+            raise ValueError('INVALID HAND SIZE')
+        deck.empty()
+        deck.cards = hand[indices]
+        deck.order = deque([i for i, v in np.ndenumerate(deck.cards) if v == 1])
+        return deck
+
     def beginGame(self):
         # Shuffle the deck.
         self.deck.shuffle()
 
-        # Set trump suit.
-        trumpSuit = self.deck.suit(-1)
+        # Set trump idx
+        self.trump_idx = self.deck.order[-1][0]
+        self.trump_suit = self.deck.suit(-1)
 
         # Initialize the players.
-        for i in range(self.numPlayers):
-            self.players += [DurakPlayer(self.deck.drawCard(6), trumpSuit)]
+        for i in range(self.n_players):
+            hand = self.getHandFromDeck(self.deck.drawCard(6))
+            self.players += [DurakPlayer(hand)]
 
         # Initialize the Field
-        self.playingField = DurakField(self.deck, self.players)
-        self.initField = self.playingField
+        self.playing_field = DurakField(self.deck, self.players)
+        self.init_field = self.playing_field
 
-    def getInitField(self):
+    def getinit_field(self):
         """ Initial Field """
-        return self.initField
+        return self.init_field
 
     def getActionSize(self, playerID):
         """ available actions given player
@@ -122,4 +157,4 @@ class DurakGame(Game):
         return len(self.Field.get_legal_moves(playerID))
 
     def getGameEnded(self):
-        return sum([len(player.deck) == 0 for player in self.players]) == self.numPlayers - 1
+        return sum([len(player.deck) == 0 for player in self.players]) == self.n_players - 1

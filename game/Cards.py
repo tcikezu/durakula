@@ -20,29 +20,7 @@ class CardCollection:
             self.cards = np.ones((n_suits, n_vals)).astype(int)
         else:
             self.cards = np.zeros((n_suits, n_vals)).astype(int)
-
-    def __len__(self):
-        return int(np.sum(self.cards))
-
-    def __str__(self):
-        head = '--- Card Collection ---\n'
-        card_str = 'Cards: ' + ','.join(_CARD_MAP_SMALL[self.cards.astype(bool)]) + '.\n'
-        size_str = 'Size: ' + str(self.__len__()) + '\n'
-        tail = '-----------------------\n'
-        return head + card_str + size_str + tail
-
-
-class Deck(CardCollection):
-    """ Create a card collection, in either small or full mode"""
-    def __init__(self, mode='small', trump='spades'):
-        self.mode = mode
-        self.n_suits = None
-        self.n_vals = None
-        self._apply_mode()
-        super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
-
         self.order = deque([i for i, v in np.ndenumerate(self.cards) if v == 1])
-        self.trump = trump
 
     def __getitem__(self, idx):
         if self.mode == 'full':
@@ -63,17 +41,33 @@ class Deck(CardCollection):
         else:
             ValueError('INVALID VALUE (MUST BE 0 OR 1)')
 
+    def __eq__(self, other):
+        self.cards = other.cards
+        self.order = other.order
+
     def __add__(self, other):
         self.cards += other.cards
         self.order += other.order
         assert(self.cards.all() == 0 or self.cards.all() == 1), 'Oops! we have 2 or more of the same card.'
         return self
 
-    def __iter__(self):
-        pass
+    # def __iter__(self):
+    #     if self.mode == 'full':
+    #         yield from _CARD_MAP_FULL[self.order]
+    #     else:
+    #         yield from _CARD_MAP_SMALL[self.order]
 
-    def __next__(self):
-        pass
+    # def __next__(self):
+    #     pass
+    def __len__(self):
+        return int(np.sum(self.cards))
+
+    def __str__(self):
+        head = '--- Card Collection ---\n'
+        card_str = 'Cards: ' + ','.join(_CARD_MAP_SMALL[self.cards.astype(bool)]) + '.\n'
+        size_str = 'Size: ' + str(self.__len__()) + '\n'
+        tail = '-----------------------\n'
+        return head + card_str + size_str + tail
 
     def suit(self, idx):
         return _SUITS[self.order[idx][0]]
@@ -100,7 +94,6 @@ class Deck(CardCollection):
 
     def drawCard(self,n=1):
         """Draw (ie, pop) according to an order."""
-
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = Deck(mode = self.mode)
         drawn_card.empty()
@@ -123,32 +116,11 @@ class Deck(CardCollection):
         self.order.removeleft(idx)
         return self
 
-    def draw(self, n=1):
-        """Draw a random card. Assume we're just shuffling and drawing from top."""
-        # rand_idx = np.array(random.sample(np.argwhere(self.cards==1).tolist(), k=n))
-        # drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
-        # drawn_card[rand_idx[:,0], rand_idx[:,1]] = 1
-        # self.cards[rand_idx[:,0], rand_idx[:,1]] = 0
-        self.shuffle()
-        return self.drawCard(n)
-
-def durak_hand(deck: Deck, trump: str) -> np.ndarray:
-    idx = _SUITS.index(trump)
-    indices = list(range(deck.n_suits))
-    indices[0], indices[idx] = indices[idx], indices[0]
-    return deck.cards[indices]
-
-def normal_hand(hand: np.ndarray, trump: str) -> Deck:
-    idx = _SUITS.index(trump)
-    indices = list(range(hand.shape[0]))
-    indices[0], indices[idx] = indices[idx], indices[0]
-    if hand.size == 52:
-        deck = Deck(mode='full')
-    elif hand.size == 36:
-        deck = Deck(mode='small')
-    else:
-        raise ValueError('INVALID HAND SIZE')
-    deck.empty()
-    deck.cards = hand[indices]
-    deck.order = deque([i for i, v in np.ndenumerate(deck.cards) if v == 1])
-    return deck
+class Deck(CardCollection):
+    """ Create a card collection, in either small or full mode"""
+    def __init__(self, mode='small'):
+        self.mode = mode
+        self.n_suits = None
+        self.n_vals = None
+        self._apply_mode()
+        super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
