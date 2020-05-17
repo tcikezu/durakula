@@ -34,15 +34,16 @@ class CardCollection:
 
 class Deck(CardCollection):
     """ Create a card collection, in either small or full mode"""
-    def __init__(self, mode='small'):
+    def __init__(self, mode='small', trump='spades'):
         self.mode = mode
         self.n_suits = None
         self.n_vals = None
         self._apply_mode()
         super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
 
-        self.order = deque([i for i,_ in np.ndenumerate(self.cards)])
-    
+        self.order = deque([i for i, v in np.ndenumerate(self.cards) if v == 1])
+        self.trump = trump
+
     def __getitem__(self, idx):
         if self.mode == 'full':
             return _CARD_MAP_FULL[self.order[idx]]
@@ -51,7 +52,7 @@ class Deck(CardCollection):
             return _CARD_MAP_SMALL[self.order[idx]]
             # return self.cards[self.order[idx]]
         else:
-            return 'Invalid mode'
+            ValueError('INVALID MODE')
 
     def __setitem__(self, idx, value):
         self.cards[self.order[idx]] = value
@@ -60,22 +61,23 @@ class Deck(CardCollection):
         elif value == 0:
             self.order.remove(self.order[idx])
         else:
-            return 'Invalid value'
-    
+            ValueError('INVALID VALUE (MUST BE 0 OR 1)')
+
     def __add__(self, other):
         self.cards += other.cards
         self.order += other.order
+        assert(self.cards.all() == 0 or self.cards.all() == 1), 'Oops! we have 2 or more of the same card.'
         return self
 
     def __iter__(self):
         pass
-    
+
     def __next__(self):
         pass
 
     def suit(self, idx):
         return _SUITS[self.order[idx][0]]
-    
+
     def value(self, idx):
         return _VALUES[self.order[idx][1]]
 
@@ -98,7 +100,7 @@ class Deck(CardCollection):
 
     def drawCard(self,n=1):
         """Draw (ie, pop) according to an order."""
-        
+
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = Deck(mode = self.mode)
         drawn_card.empty()
@@ -113,9 +115,9 @@ class Deck(CardCollection):
     # but in other cases idx refers to a position in self.order
     def addCard(self, idx):
         self.cards[idx] = 1
-        self.order.appendleft(idx) 
+        self.order.appendleft(idx)
         return self
-    
+
     def removeCard(self, idx=0):
         self.cards[idx] = 0
         self.order.removeleft(idx)
@@ -129,3 +131,24 @@ class Deck(CardCollection):
         # self.cards[rand_idx[:,0], rand_idx[:,1]] = 0
         self.shuffle()
         return self.drawCard(n)
+
+def durak_hand(deck: Deck, trump: str) -> np.ndarray:
+    idx = _SUITS.index(trump)
+    indices = list(range(deck.n_suits))
+    indices[0], indices[idx] = indices[idx], indices[0]
+    return deck.cards[indices]
+
+def normal_hand(hand: np.ndarray, trump: str) -> Deck:
+    idx = _SUITS.index(trump)
+    indices = list(range(hand.shape[0]))
+    indices[0], indices[idx] = indices[idx], indices[0]
+    if hand.size == 52:
+        deck = Deck(mode='full')
+    elif hand.size == 36:
+        deck = Deck(mode='small')
+    else:
+        raise ValueError('INVALID HAND SIZE')
+    deck.empty()
+    deck.cards = hand[indices]
+    deck.order = deque([i for i, v in np.ndenumerate(deck.cards) if v == 1])
+    return deck

@@ -95,16 +95,15 @@ class DurakGame(Game):
         self.beginGame()
 
     def beginGame(self):
-        # Initialize the players
-        for i in range(self.numPlayers):
-            self.players += [DurakPlayer(self.deck)]
-
         # Shuffle the deck.
         self.deck.shuffle()
 
-        # Initialize the players' hands.
-        for id in range(self.numPlayers):
-            self.players[id % self.numPlayers].drawHand(self.deck, 6)
+        # Set trump suit.
+        trumpSuit = self.deck.suit(-1)
+
+        # Initialize the players.
+        for i in range(self.numPlayers):
+            self.players += [DurakPlayer(self.deck.drawCard(6), trumpSuit)]
 
         # Initialize the Field
         self.playingField = DurakField(self.deck, self.players)
@@ -121,6 +120,6 @@ class DurakGame(Game):
         :type playerID: int
         """
         return len(self.Field.get_legal_moves(playerID))
-    
+
     def getGameEnded(self):
-        return sum([len(player.hands) == 0 for player in self.players]) == self.numPlayers - 1
+        return sum([len(player.deck) == 0 for player in self.players]) == self.numPlayers - 1

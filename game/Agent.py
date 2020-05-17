@@ -1,5 +1,5 @@
 import numpy as np
-from Cards import Deck
+from Cards import Deck, durak_hand, normal_hand
 class Agent:
     def __init__(self):
         pass
@@ -10,13 +10,14 @@ class Agent:
 # DurakPlayer a collection?
 class DurakPlayer(Agent):
     """ All a durak player needs is a hand"""
-    def __init__(self, deck):
+    def __init__(self, deck: Deck, trumpSuit: str) -> None:
         # Always initialize with an empty deck
         # I.e., create an empty Deck object of same mode as deck
-        self.hand = Deck(mode=deck.mode).empty()
+        self.trumpSuit = trumpSuit
+        self.hand = durak_hand(deck, trumpSuit)
         self.mode = 'waiting'
 
-    def drawHand(self, deck, numCards):
+    def drawFromDeck(self, deck, numCards):
         """ Draw variable number of cards from a deck
 
         :param deck: deck to draw from
@@ -24,7 +25,8 @@ class DurakPlayer(Agent):
         :param numCards: number of cards to draw
         :type numCards: int
         """
-        self.hand += deck.drawCard(numCards)
+        self.deck += deck.drawCard(numCards)
+        self.hand = durak_hand(self.deck)
 
     def attack(self):
         self.mode = 'attack'

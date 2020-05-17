@@ -42,12 +42,12 @@
 
 <dl class="py class">
 <dt id="Cards.Deck">
-<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">Deck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'small'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">Deck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'small'</span></em>, <em class="sig-param"><span class="n">trump</span><span class="o">=</span><span class="default_value">'spades'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Cards.CardCollection" title="Cards.CardCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cards.CardCollection</span></code></a></p>
 <p>Create a card collection, in either small or full mode</p>
 <dl class="py method">
 <dt id="Cards.Deck.addCard">
-<code class="sig-name descname">addCard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cards</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.addCard" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">addCard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.addCard" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -59,7 +59,7 @@
 <dl class="py method">
 <dt id="Cards.Deck.drawCard">
 <code class="sig-name descname">drawCard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.drawCard" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw according to an order.</p>
+<dd><p>Draw (ie, pop) according to an order.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -67,6 +67,11 @@
 <code class="sig-name descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Empty this deck.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt id="Cards.Deck.removeCard">
+<code class="sig-name descname">removeCard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Deck.removeCard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="Cards.Deck.shuffle">
@@ -84,6 +89,16 @@
 <dd></dd></dl>
 
 </dd></dl>
+
+<dl class="py function">
+<dt id="Cards.durak_hand">
+<code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">durak_hand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Cards.Deck</a></span></em>, <em class="sig-param"><span class="n">trump</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="headerlink" href="#Cards.durak_hand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="Cards.normal_hand">
+<code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">normal_hand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">trump</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Cards.Deck</a><a class="headerlink" href="#Cards.normal_hand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="the-durakgame-class">
@@ -111,6 +126,24 @@ called players since we haven’t implemented AI Agents (yet).</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="Game.DurakGame.getGameEnded">
+<code class="sig-name descname">getGameEnded</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.getGameEnded" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Input:</dt><dd><p>players: current players</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>0 if game has not ended. 1 if there is only one player remaining
+(who has lost)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>r</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Game.DurakGame.getInitField">
 <code class="sig-name descname">getInitField</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.getInitField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initial Field</p>
@@ -125,7 +158,7 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <dt id="Field.DurakField">
 <em class="property">class </em><code class="sig-prename descclassname">Field.</code><code class="sig-name descname">DurakField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em>, <em class="sig-param"><span class="n">players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Field.Field</span></code></p>
-<p>Maintains deck in middle of table, and each player’s hands.</p>
+<p>Maintains deck in middle of table, and each player’s deck.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -142,7 +175,7 @@ called players since we haven’t implemented AI Agents (yet).</p>
 
 <dl class="py method">
 <dt id="Field.DurakField.get_legal_moves">
-<code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em>, <em class="sig-param"><span class="n">attack</span></em>, <em class="sig-param"><span class="n">hand</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.get_legal_moves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">playerID</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.get_legal_moves" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -152,7 +185,7 @@ called players since we haven’t implemented AI Agents (yet).</p>
 
 <dl class="py method">
 <dt id="Field.DurakField.list_moves">
-<code class="sig-name descname">list_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">move_array</span></em>, <em class="sig-param"><span class="n">card_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.list_moves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">valid_moves</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.list_moves" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -162,12 +195,22 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <h2>The <code class="docutils literal notranslate"><span class="pre">DurakPlayer</span></code> class<a class="headerlink" href="#the-durakplayer-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="Agent.DurakPlayer">
-<em class="property">class </em><code class="sig-prename descclassname">Agent.</code><code class="sig-name descname">DurakPlayer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Agent.</code><code class="sig-name descname">DurakPlayer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Cards.Deck</a></span></em>, <em class="sig-param"><span class="n">trumpSuit</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Agent.Agent</span></code></p>
 <p>All a durak player needs is a hand</p>
 <dl class="py method">
-<dt id="Agent.DurakPlayer.drawHand">
-<code class="sig-name descname">drawHand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em>, <em class="sig-param"><span class="n">numCards</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.drawHand" title="Permalink to this definition">¶</a></dt>
+<dt id="Agent.DurakPlayer.attack">
+<code class="sig-name descname">attack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.attack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.defend">
+<code class="sig-name descname">defend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.defend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.drawFromDeck">
+<code class="sig-name descname">drawFromDeck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em>, <em class="sig-param"><span class="n">numCards</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.drawFromDeck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw variable number of cards from a deck</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
