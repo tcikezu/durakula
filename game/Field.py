@@ -27,7 +27,7 @@ class Field:
 
 class DurakField(Field):
     """ This class defines legal moves you can make in a game of Durak, given
-    every players' hands and the current cards played on the field. 
+    every players' hands and the current cards played on the field.
 
     Input:
         deck (Deck): A deck that is optionally the deck from which we draw all values.
@@ -45,12 +45,14 @@ class DurakField(Field):
     def __init__(self, deck, players):
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
+        self.drawing_deck = deck
         self.n_players = len(players)
         self.players = players # list of Agent class objects
         self.trump_suit = self.drawing_deck.suit(-1)
         self.trump_suit_idx = deck.order[-1][0]
 
-        self.player_durak_hands = np.array([p.hand.ravel() for p in self.players])
+
+        # self.player_durak_hands = np.array([p.hand.ravel() for p in self.players])
 
         # field is a N x N array, where N = number of cards
         # columns are attacks
@@ -80,6 +82,9 @@ class DurakField(Field):
         tail = '---------------------\n'
         return head + drawing_deck_str + ''.join(player_list) + trump_str + tail
 
+    def fieldIsEmpty(self):
+        return np.sum(self.field).astype('int') == 0
+
     def get_legal_moves(self, playerID):
         if self.players[playerID].mode == 'defend':
             # Assuming there are attacks in self.attacks
@@ -100,12 +105,12 @@ class DurakField(Field):
             # print('attack mode')
             # Assuming there cards on the field.
             valid_attacks = np.zeros_like(self.attacks)
-            if np.sum(self.field).astype('int') > 0:
-                attack_idxs = np.unique(np.argwhere(self.field)[:,1])
-                valid_attacks[:,attack_idxs] = 1
-                valid_attacks *= self.players[playerID].hand
-            else:
+            if self.fieldIsEmpty():
                 valid_attacks = self.players[playerID].hand
+            else:
+                attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
+                valid_attacks[:,attack_idxs % self.n_vals] = 1
+                valid_attacks *= self.players[playerID].hand
 
             return valid_attacks # + ['wait']
 
@@ -116,8 +121,8 @@ class DurakField(Field):
         else:
             raise ValueError('INVALID PLAYER MODE: MUST BE ONE OF "attack", "defend", "waiting", "finished"')
 
-    def list_moves(self, valid_moves):
-        pass
+    # def list_nonzero_combinations(self, valid_moves):
+    #     attack_idxs = np.ndenumerate(valid_moves)
 
     def has_legal_moves(self, attack):
         if attack is True:
