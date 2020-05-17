@@ -69,7 +69,7 @@ class DurakField(Field):
         tail = '---------------------\n'
         return head + drawing_deck_str + ''.join(player_list) + trump_str + tail
 
-    def fieldIsEmpty(self):
+    def field_is_empty(self):
         return np.sum(self.field).astype('int') == 0
 
     def get_legal_moves(self, playerID: int):
@@ -92,7 +92,7 @@ class DurakField(Field):
         elif self.players[playerID].mode == 'attack':
             # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
-            if self.fieldIsEmpty():
+            if self.field_is_empty():
                 valid_attacks = self.players[playerID].hand
             else:
                 attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
