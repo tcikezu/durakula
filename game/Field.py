@@ -26,14 +26,20 @@ class Field:
     # 	""" Generator expression for incrementing moves """
 
 class DurakField(Field):
-    """ Maintains deck in middle of table, and each player's deck.
+    """ This class defines legal moves you can make in a game of Durak, given
+    every players' hands and the current cards played on the field. 
 
-    :param trump: the trump suit
-    :type trump: int
-    :param deck: the starting deck
-    :type deck: Deck
-    :param players: list of players
-    :type players: list(DurakPlayer)
+    Input:
+        deck (Deck): A deck that is optionally the deck from which we draw all values.
+
+        players (list): A list of :class:`Agent.DurakPlayer` objects
+
+    Attributes:
+        field (np.ndarray): The 'table' in N x N form, where N is the total number of cards
+    in the initial deck. The columns correspond to attacks, and rows correspond to
+    defends, for each attack.
+
+
     """
     # Might be useful to convert this into **kwargs
     def __init__(self, deck, players):
@@ -41,9 +47,6 @@ class DurakField(Field):
         self.n_suits = deck.n_suits
         self.n_players = len(players)
         self.players = players # list of Agent class objects
-        self.drawing_deck = deck
-        self.garbage = Deck(mode=deck.mode).empty()
-        # self.bottomCard = self.drawing_deck[-1]
         self.trump_suit = self.drawing_deck.suit(-1)
         self.trump_suit_idx = deck.order[-1][0]
 
@@ -55,6 +58,7 @@ class DurakField(Field):
         # the first row of attacks and defends is always the trump suit
         # the first 13 rows and 13 columns of field also correspond to trump suit
         self.field = np.zeros((deck.cards.size, deck.cards.size))
+        self.buffer = np.zeros((deck.cards.size, deck.cards.size))
         self.attacks = np.zeros_like(deck.cards)
         self.defends = np.zeros_like(deck.cards)
 
@@ -107,8 +111,10 @@ class DurakField(Field):
 
         elif mode == 'waiting':
             return ['wait', 'attack']
+        elif mode == 'finished':
+            return []
         else:
-            raise ValueError('INVALID PLAYER MODE: MUST BE ONE OF "attack", "defend", "waiting"')
+            raise ValueError('INVALID PLAYER MODE: MUST BE ONE OF "attack", "defend", "waiting", "finished"')
 
     def list_moves(self, valid_moves):
         pass

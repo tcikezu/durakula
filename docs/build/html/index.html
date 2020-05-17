@@ -91,8 +91,81 @@
 <dt id="Game.DurakGame">
 <em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakGame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_players</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">deckMode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Game.Game</span></code></p>
-<p>State machine for game of Durak. Note, the agents here are
-called players since we haven’t implemented AI Agents (yet).</p>
+<p>State machine for game of Durak.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_players</strong> (<em>int</em>) – The number of players playing a game of Durak.</p></li>
+<li><p><strong>deckMode</strong> (<em>str</em>) – This is either <cite>full’ or `small</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="Game.DurakGame.n_players">
+<code class="sig-name descname">n_players</code><a class="headerlink" href="#Game.DurakGame.n_players" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of players playing a game of Durak.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="Game.DurakGame.deck">
+<code class="sig-name descname">deck</code><a class="headerlink" href="#Game.DurakGame.deck" title="Permalink to this definition">¶</a></dt>
+<dd><p>The deck we’re playing with</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Deck</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="Game.DurakGame.players">
+<code class="sig-name descname">players</code><a class="headerlink" href="#Game.DurakGame.players" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of <a class="reference internal" href="#Agent.DurakPlayer" title="Agent.DurakPlayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Agent.DurakPlayer</span></code></a> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="Game.DurakGame.playing_field">
+<code class="sig-name descname">playing_field</code><a class="headerlink" href="#Game.DurakGame.playing_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>The playing field which contains rules for game-play.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#Field.DurakField" title="Field.DurakField">Field.DurakField</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="Game.DurakGame.trump_suit">
+<code class="sig-name descname">trump_suit</code><a class="headerlink" href="#Game.DurakGame.trump_suit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The selected trump suit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="Game.DurakGame.trump_idx">
+<code class="sig-name descname">trump_idx</code><a class="headerlink" href="#Game.DurakGame.trump_idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>index for selected trump suit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="Game.DurakGame.beginGame">
 <code class="sig-name descname">beginGame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.beginGame" title="Permalink to this definition">¶</a></dt>
@@ -104,7 +177,7 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <dd><p>available actions given player</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>playerID</strong> (<em>int</em>) – input player</p>
+<dd class="field-odd"><p><strong>playerID</strong> (<em>int</em>) – index for player</p>
 </dd>
 </dl>
 </dd></dl>
@@ -113,9 +186,8 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <dt id="Game.DurakGame.getDeckFromHand">
 <code class="sig-name descname">getDeckFromHand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Cards.Deck</a><a class="headerlink" href="#Game.DurakGame.getDeckFromHand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a hand into a deck object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>hand</strong> (<em>np.ndarray</em>) – Hand whose first row corresponds to trump suit</p>
+<dl class="simple">
+<dt>Input:</dt><dd><p>hand (np.ndarray): The hand whose first row corresponds to trump suit</p>
 </dd>
 </dl>
 </dd></dl>
@@ -123,19 +195,7 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <dl class="py method">
 <dt id="Game.DurakGame.getGameEnded">
 <code class="sig-name descname">getGameEnded</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.getGameEnded" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Input:</dt><dd><p>players: current players</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>0 if game has not ended. 1 if there is only one player remaining
-(who has lost)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>r</p>
-</dd>
-</dl>
+<dd><p>Will return True when game is over.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -143,16 +203,15 @@ called players since we haven’t implemented AI Agents (yet).</p>
 <code class="sig-name descname">getHandFromDeck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#Cards.Deck" title="Cards.Deck">Cards.Deck</a></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="headerlink" href="#Game.DurakGame.getHandFromDeck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a deck into a “hand”, which is a 2d np.ndarray
 whose first row is always trump suit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>deck</strong> (<a class="reference internal" href="#Cards.Deck" title="Cards.Deck"><em>Deck</em></a>) – Deck from which we get our hand</p>
+<dl class="simple">
+<dt>Input:</dt><dd><p>deck (Deck): The deck from which we get our hand</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakGame.getinit_field">
-<code class="sig-name descname">getinit_field</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.getinit_field" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakGame.getInitfield">
+<code class="sig-name descname">getInitfield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.getInitfield" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initial Field</p>
 </dd></dl>
 
@@ -165,16 +224,26 @@ whose first row is always trump suit.</p>
 <dt id="Field.DurakField">
 <em class="property">class </em><code class="sig-prename descclassname">Field.</code><code class="sig-name descname">DurakField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em>, <em class="sig-param"><span class="n">players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Field.Field</span></code></p>
-<p>Maintains deck in middle of table, and each player’s deck.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>trump</strong> (<em>int</em>) – the trump suit</p></li>
-<li><p><strong>deck</strong> (<a class="reference internal" href="#Cards.Deck" title="Cards.Deck"><em>Deck</em></a>) – the starting deck</p></li>
-<li><p><strong>players</strong> (<em>list</em><em>(</em><a class="reference internal" href="#Agent.DurakPlayer" title="Agent.DurakPlayer"><em>DurakPlayer</em></a><em>)</em>) – list of players</p></li>
-</ul>
+<p>This class defines legal moves you can make in a game of Durak, given
+every players’ hands and the current cards played on the field.</p>
+<dl>
+<dt>Input:</dt><dd><p>deck (Deck): A deck that is optionally the deck from which we draw all values.</p>
+<p>players (list): A list of <a class="reference internal" href="#Agent.DurakPlayer" title="Agent.DurakPlayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Agent.DurakPlayer</span></code></a> objects</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="Field.DurakField.field">
+<code class="sig-name descname">field</code><a class="headerlink" href="#Field.DurakField.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ‘table’ in N x N form, where N is the total number of cards</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>in the initial deck. The columns correspond to attacks, and rows correspond to
+defends, for each attack.</p>
 <dl class="py method">
 <dt id="Field.DurakField.execute_move">
 <code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attack</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
@@ -213,6 +282,16 @@ whose first row is always trump suit.</p>
 <dl class="py method">
 <dt id="Agent.DurakPlayer.defend">
 <code class="sig-name descname">defend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.defend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.finish">
+<code class="sig-name descname">finish</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.finish" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.wait">
+<code class="sig-name descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.wait" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

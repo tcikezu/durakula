@@ -81,8 +81,20 @@ class Game:
     #     return self.__str__()
 
 class DurakGame(Game):
-    """ State machine for game of Durak. Note, the agents here are
-    called players since we haven't implemented AI Agents (yet).
+    """ State machine for game of Durak.
+
+    Args:
+        n_players (int): The number of players playing a game of Durak.
+
+        deckMode (str): This is either `full' or `small`.
+
+    Attributes:
+        n_players (int): The number of players playing a game of Durak.
+        deck (Deck): The deck we're playing with
+        players (list): A list of :class:`Agent.DurakPlayer` objects.
+        playing_field (Field.DurakField): The playing field which contains rules for game-play.
+        trump_suit (string): The selected trump suit.
+        trump_idx (int): index for selected trump suit.
     """
     def __init__(self, n_players: int, deckMode: str) -> None:
         self.n_players = n_players
@@ -101,8 +113,8 @@ class DurakGame(Game):
         """ Convert a deck into a "hand", which is a 2d np.ndarray
         whose first row is always trump suit.
 
-        :param deck: Deck from which we get our hand
-        :type deck: Deck
+        Input:
+            deck (Deck): The deck from which we get our hand
         """
         indices = list(range(deck.n_suits))
         indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
@@ -111,8 +123,8 @@ class DurakGame(Game):
     def getDeckFromHand(self, hand: np.ndarray) -> Deck:
         """ Convert a hand into a deck object.
 
-        :param hand: Hand whose first row corresponds to trump suit
-        :type hand: np.ndarray
+        Input:
+            hand (np.ndarray): The hand whose first row corresponds to trump suit
         """
         indices = list(range(hand.shape[0]))
         indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
@@ -144,17 +156,18 @@ class DurakGame(Game):
         self.playing_field = DurakField(self.deck, self.players)
         self.init_field = self.playing_field
 
-    def getinit_field(self):
+    def getInitfield(self):
         """ Initial Field """
         return self.init_field
 
     def getActionSize(self, playerID):
         """ available actions given player
 
-        :param playerID: input player
-        :type playerID: int
+        Args:
+            playerID (int): index for player
         """
         return len(self.Field.get_legal_moves(playerID))
 
     def getGameEnded(self):
+        """ Will return True when game is over. """
         return sum([len(player.deck) == 0 for player in self.players]) == self.n_players - 1

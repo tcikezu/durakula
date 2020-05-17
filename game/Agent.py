@@ -21,3 +21,9 @@ class DurakPlayer(Agent):
 
     def defend(self):
         self.mode = 'defend'
+
+    def finish(self):
+        self.mode = 'finished'
+
+    def wait(self):
+        self.mode = 'waiting'
