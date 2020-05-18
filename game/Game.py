@@ -187,15 +187,18 @@ class DurakGame(Game):
             next_player_id (int): The id of player who plays in the next turn.
         """
 
+        # Immutable containers for defend and attack player ids. Note: ids are computed after the move is executed.
+
+        # Moving this before execute_move because it's possible that on first attack, the attacker runs out of cards, and initial_attack_ids is empty.
+        initial_defend_id = self.playing_field.defend_player().player_id
+        initial_attack_ids = tuple([p.player_id for p in self.playing_field.attack_players()])
+
+
         player = self.players[player_id]
         if player.is_attack() or player.is_defend():
             self.playing_field.execute_move(action, player_id)
         if player.is_wait() or player.is_finished():
             return self.playing_field, self.next_player(player_id)
-
-        # Immutable containers for defend and attack player ids. Note: ids are computed after the move is executed. (No player_modes are changed in DurakField.execute_move, except for when a player has finished.)
-        initial_defend_id = self.playing_field.defend_player().player_id
-        initial_attack_ids = tuple([p.player_id for p in self.playing_field.attack_players()])
 
         # The playing field is only inactivated after a defending player successfully defends, or fails to defend. Thus the below case only happens if the current player is defending. This also means the next player id is new_attack_id.
         if self.playing_field.field_active == False:
@@ -226,10 +229,12 @@ class DurakGame(Game):
             # Draw from deck, first by order of attack, and lastly by defend.
             deck = self.playing_field.drawing_deck
             for id in unique_attack_order + [initial_defend_id]:
+
                 # Draw either enough cards to have 6 cards, or no cards.
                 if self.players[id].is_finished() == False:
                     if len(deck) > 0:
                         self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)), id)
+                # Is it possible for there to not be enough cards in the deck? Ie is it possible that after we draw cards, one person doesn't get to draw any cards, so they've finished? I think the game is structured so that that should never be the case.
 
             # Reset the field.
             self.playing_field.clear_field()

@@ -238,7 +238,7 @@ class DurakField(Field):
         elif player.is_finished():
             pass
 
-        if player.hand_is_empty():
+        if player.hand_is_empty() and len(self.drawing_deck) == 0:
             if player.is_defend():
                 self.field_active = False
             player.finished()
