@@ -1,6 +1,5 @@
-import numpy as np
+from utils import *
 import copy
-from itertools import combinations
 from math import ceil
 
 class Field:
@@ -22,6 +21,10 @@ class Field:
     # def _increment_move(move):
     # 	""" Generator expression for incrementing moves """
 
+# _ACTION_WAIT = 'ACTION_WAIT'
+# _ACTION_ATTACK = 'ACTION_ATTACK'
+_ACTION_GIVEUP = 'ACTION_GIVEUP'
+
 class DurakField(Field):
     """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
     # Might be useful to convert this into **kwargs
@@ -35,9 +38,10 @@ class DurakField(Field):
         self.players = players # list of Agent class objects
         self.trump_suit = self.drawing_deck.suit(-1)
         self.trump_suit_idx = deck.order[-1][0]
+        self.attack_order = []
 
-
-        # self.player_durak_hands = np.array([p.hand.ravel() for p in self.players])
+        self.first_attack = True
+        self.field_active = True
 
         # field is a N x N array, where N = number of cards
         # columns are attacks
@@ -45,20 +49,11 @@ class DurakField(Field):
         # the first row of attacks and defends is always the trump suit
         # the first 13 rows and 13 columns of field also correspond to trump suit
         self.field = np.zeros((deck.cards.size, deck.cards.size))
-        self.buffer = np.zeros((deck.cards.size, deck.cards.size))
         self.attacks = np.zeros_like(deck.cards)
-        self.defends = np.zeros_like(deck.cards)
 
-        self.player_on_defense = np.random.randint(self.n_players)
-        self.players[self.player_on_defense].defend()
-        self.players_on_attack = [(self.player_on_defense - 1) % self.n_players]
-        self.players[self.players_on_attack[0]].attack()
-
-        # self.battle_mask = CardCollection()
-        # self.battle_mask[trump,:] = 1
 
     def __str__(self):
-        """Output string for Field/"""
+        """Output string for Field."""
 
         head = '--- Playing Field ---\n'
         drawing_deck_str = 'Drawing DurakDeck: ' + str(self.drawing_deck) + '\n'
@@ -70,11 +65,33 @@ class DurakField(Field):
     def field_is_empty(self):
         return np.sum(self.field).astype('int') == 0
 
+    def clear_field(self):
+        """Clear field after a defender has successfully defended or given up."""
+        self.field *= 0
+        self.attacks *= 0
+        for p in self.players:
+            p.clear_buffer()
+        self.first_attack = True
+        self.field_active = True
+        self.attack_order = []
+
+    def defend_player(self):
+        return [p for p in self.players if p.is_defend()][0]
+
+    def attack_players(self):
+        return [p for p in self.players if p.is_attack()]
+
     def get_legal_moves(self, player_id: int):
-        """Return a list of legal moves for the given player."""
-        if self.players[player_id].player_mode == 'defend':
+        """Returns a list of legal moves. The basic moves are to attack, or to defend. If player mode is set to finished or wait, then no move can be performed."""
+        player = self.players[player_id]
+        if player.is_defend():
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
+
+            # Successful defense -- nobody attacks.
+            if len(attack_idxs) == 0 and len([p for p in self.players if p.is_wait()]) == self.n_players - 1:
+                return [()]
+
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
             valid_defenses = np.zeros_like(self.field)
             f = lambda x : (x // self.n_vals + 1)*self.n_vals
@@ -84,37 +101,106 @@ class DurakField(Field):
             for att_idx in nontrump_attack_idxs:
                 valid_defenses[:self.n_vals, att_idx] = 1
 
-            valid_defenses *= self.hands[player_id].ravel()[:,np.newaxis]
-            return valid_defenses # + ['pass']
+            if self.first_attack:
+                valid_defenses[att_idx % self.n_vals : att_idx % self.n_vals + self.n_suits*self.n_vals : self.n_vals, att_idx] = 1
 
-        elif self.players[player_id].player_mode == 'attack':
+            valid_defenses *= player.hand.ravel()[:,np.newaxis]
+            list_def_combinations = self.defense_combinations(valid_defenses)
+            if len(list_def_combinations) == 0:
+                return [_ACTION_GIVEUP]
+            else:
+                return list_def_combinations
+
+        elif player.is_attack():
             # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
-            if self.field_is_empty():
-                valid_attacks = self.hands[player_id]
+
+            if self.first_attack:
+                valid_attacks = player.hand
+                # L - the maximum number of cards we can attack with.
+                L = min(np.sum(valid_attacks), len(self.defend_player()))
+                return self.first_attack_combinations(valid_attacks, L)
             else:
                 attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
                 valid_attacks[:,attack_idxs % self.n_vals] = 1
-                valid_attacks *= self.hands[player_id]
-
-            return valid_attacks # + ['wait']
-
-        elif self.players[player_id].player_mode == 'waiting':
-            return ['wait', 'attack']
-        elif self.players[player_id].player_mode == 'finished':
+                valid_attacks *= player.hand
+                # L - the maximum number of cards we can attack with.
+                L = min(np.sum(valid_attacks), len(self.defend_player()))
+                return list_nonzero_combinations(valid_attacks, L) + [()]
+        elif player.is_wait() or player.is_finished():
             return []
         else:
-            raise ValueError('INVALID PLAYER MODE: MUST BE ONE OF "attack", "defend", "waiting", "finished"')
+            raise ValueError('INVALID PLAYER MODE')
 
-    # def list_nonzero_combinations(self, valid_moves):
-    #     attack_idxs = np.ndenumerate(valid_moves)
+    def first_attack_combinations(self, valid_attacks: np.ndarray, L: int) -> list:
+        """The first attack can only be cards of the same value."""
+        idxs = indices_of_ones(valid_attacks)
+        def valid(c):
+            """Mini-function that only serves to create valid combinations."""
+            return min(np.array(c)[:,1]) == max(np.array(c)[:,1])
 
-    def has_legal_moves(self):
-        pass
+        first_att_combinations = []
+        for r in range(1,L+1):
+            first_att_combinations += [c for c in combinations(idxs, r) if valid(c)]
+        return first_att_combinations
 
-    def execute_move(self):
-        pass
+    def defense_combinations(self, valid_defenses: np.ndarray) -> list:
+        """Returns every possible defense given valid_defenses."""
+        idxs = indices_of_ones(valid_defenses)
+        attacks = np.unique(np.argwhere(valid_defenses)[:,1])
+        defends = np.unique(np.argwhere(valid_defenses)[:,0])
+        if len(attacks) > len(defends):
+            return []
+
+        def valid(c):
+            """Mini-function that only serves to create valid combinations."""
+            return len(np.unique(np.array(c)[:,0])) == len(np.unique(np.array(c)[:,1])) == len(c)
+
+        r = len(attacks)
+        def_combinations = [c for c in combinations(idxs, r) if valid(c)]
+        return def_combinations
+
+    def has_legal_moves(self, player_id: int):
+        """A player has legal moves so long as their hand isn't empty."""
+        return self.players[player_id].hand_is_empty()
+
+    def execute_move(self, move, player_id: int):
+        """Execute a move for the given player."""
+        player = self.players[player_id]
+        if player.is_attack():
+            current_buffer = np.zeros_like(player.buffer)
+            if len(move) == 0: # Wait.
+                player.wait()
+            else:
+                self.attack_order.append(player_id)
+                for m in move:
+                    current_buffer[m] = 1
+                player.buffer += current_buffer
+                self.attacks += current_buffer
+                player.hand -= current_buffer
+        elif player.is_defend():
+            current_buffer = np.zeros_like(player.buffer)
+            if len(move) == 0: # Successful defense
+                self.field_active = False
+            if move == _ACTION_GIVEUP:
+                player.hand += self.attacks
+                self.field_active = False
+            else:
+                for m in move:
+                    current_buffer[m[0] // self.n_vals, m[0] % self.n_vals] = 1
+                    self.field[m] = 1
+                player.hand -= current_buffer
+                player.buffer += current_buffer
+
+        elif player.is_wait():
+            pass
+        elif player.is_finished():
+            pass
+
+        if player.hand_is_empty():
+            player.finished()
 
     @staticmethod
     def _increment_move(move):
         """ Generator expression for incrementing moves """
+        pass

@@ -1,4 +1,4 @@
-import numpy as np
+from utils import *
 import random
 from collections import deque
 
@@ -16,6 +16,7 @@ _VALUES = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
 
 class CardCollection:
     def __init__(self, n_suits=4, n_vals=9, fill=False):
+        self.order = None
         if fill:
             self.cards = np.ones((n_suits, n_vals)).astype(int)
         else:
@@ -24,26 +25,23 @@ class CardCollection:
 
     def __getitem__(self, idx):
         if self.cards.size == 52:
-            return _CARD_MAP_FULL[self.order[idx]]
-            # return self.cards[self.order[idx]]
-        elif self.cards.size == 36:
             return _CARD_MAP_SMALL[self.order[idx]]
-            # return self.cards[self.order[idx]]
-        else:
-            ValueError('INVALID CARDS SIZE')
+        if self.cards.size == 36:
+            return _CARD_MAP_FULL[self.order[idx]]
 
     def __setitem__(self, idx, value):
-        self.cards[self.order[idx]] = value
         if value == 1:
             self.order.appendleft(self.order[idx])
+            self.cards[self.order[idx]] = 1
         elif value == 0:
             self.order.remove(self.order[idx])
+            self.cards[self.order[idx]] = 0
         else:
             ValueError('INVALID VALUE (MUST BE 0 OR 1)')
 
     def __eq__(self, other):
-        self.cards = other.cards
         self.order = other.order
+        self.cards = other.cards
 
     def __add__(self, other):
         self.cards += other.cards
@@ -60,14 +58,14 @@ class CardCollection:
     # def __next__(self):
     #     pass
     def __len__(self):
-        return int(np.sum(self.cards))
+        return len(self.order)
 
     def __str__(self):
         head = '--- Card Collection ---\n'
         if self.cards.size == 52:
-            card_str = 'Cards: ' + ','.join(_CARD_MAP_FULL[self.cards.astype(bool)]) + '.\n'
+            card_str = 'Cards: ' + ','.join([_CARD_MAP_FULL[idx] for idx in self.order]) + '.\n'
         elif self.cards.size == 36:
-            card_str = 'Cards: ' + ','.join(_CARD_MAP_SMALL[self.cards.astype(bool)]) + '.\n'
+            card_str = 'Cards: ' + ','.join([_CARD_MAP_SMALL[idx] for idx in self.order]) + '.\n'
         else:
             ValueError('INVALID CARDS SIZE')
         size_str = 'Size: ' + str(self.__len__()) + '\n'
@@ -99,25 +97,29 @@ class CardCollection:
         return self
 
     def reorder(self):
-        self.order = deque([i for i, v in np.ndenumerate(self.cards) if v == 1])
+        self.order = deque(indices_of_ones(self.cards))
 
     def shuffle(self):
         random.shuffle(self.order)
 
+    def cut(self, idx=None):
+        if idx == None:
+            idx = random.choice(range(len(self.order)))
+        self.order.rotate(idx)
+
 class DurakDeck(CardCollection):
     """Create a card collection, in either small or full mode."""
     def __init__(self, cards = None, mode='small'):
-        if cards is None:
-            self.mode = mode
-            self.n_suits = None
-            self.n_vals = None
-            self._apply_mode()
-            super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
+        self.mode = mode
+        self.n_suits = None
+        self.n_vals = None
+        self._apply_mode()
 
+        if cards is None:
+            super().__init__(n_suits=self.n_suits, n_vals=self.n_vals, fill=True)
         else:
-            self.mode = mode
-            self._apply_mode()
             self.cards = cards
+            self.order = None
             self.reorder()
         self.trump_suit = self.suit(-1)
         self.trump_idx = self.order[-1][0]
@@ -135,7 +137,7 @@ class DurakDeck(CardCollection):
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = DurakDeck(mode = self.mode)
         drawn_card.empty()
-        for i in range(n):
+        for i in range(min(n, len(self.order))):
             idx = self.order[0]
             self.__setitem__(0, 0)
             drawn_card.cards[idx] = 1

@@ -39,6 +39,11 @@
 <em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">CardCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suits</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">n_vals</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">fill</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt id="Cards.CardCollection.cut">
+<code class="sig-name descname">cut</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection.cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="Cards.CardCollection.draw_card">
 <code class="sig-name descname">draw_card</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection.draw_card" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw (ie, pop) according to an order.</p>
@@ -113,7 +118,7 @@
 <h2>The <code class="docutils literal notranslate"><span class="pre">DurakGame</span></code> class<a class="headerlink" href="#the-durakgame-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="Game.DurakGame">
-<em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakGame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_players</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">deck_mode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakGame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_players</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">deck_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">dealer</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Game.Game</span></code></p>
 <p>State machine for game of Durak.</p>
 <dl class="py method">
@@ -146,6 +151,29 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="Game.DurakGame.get_next_state">
+<code class="sig-name descname">get_next_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_next_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets the state of the next field, given a player_id and the move they perform. If player is in wait mode, then we can just move on to next player. If player is in attack mode, then we execute the move, and then have defending player make a move. If player is in defend mode, then we let them execute the move, then depending on whether field is active / inactive, allow the next attacking player to make a move.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Game.DurakGame.get_valid_moves">
+<code class="sig-name descname">get_valid_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_valid_moves" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Input:</dt><dd><p>players: current player(s)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a binary vector of length self.get_action_size(), 1 for moves that are valid from the current board and player, 0 for invalid moves</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>validMoves</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Game.DurakGame.string_representation">
 <code class="sig-name descname">string_representation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.string_representation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print string representation of field.</p>
@@ -162,8 +190,14 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Field.Field</span></code></p>
 <p>This class defines legal moves you can make in a game of Durak, given every players’ hands and the current cards played on the field.</p>
 <dl class="py method">
+<dt id="Field.DurakField.defense_combinations">
+<code class="sig-name descname">defense_combinations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">valid_defenses</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#Field.DurakField.defense_combinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns every possible defense given valid_defenses.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Field.DurakField.execute_move">
-<code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">move</span></em>, <em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -179,7 +213,7 @@
 
 <dl class="py method">
 <dt id="Field.DurakField.has_legal_moves">
-<code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.has_legal_moves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.has_legal_moves" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -198,13 +232,18 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="Agent.DurakPlayer.clear_buffer">
+<code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.clear_buffer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="Agent.DurakPlayer.defend">
 <code class="sig-name descname">defend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.defend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Agent.DurakPlayer.finish">
-<code class="sig-name descname">finish</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.finish" title="Permalink to this definition">¶</a></dt>
+<dt id="Agent.DurakPlayer.finished">
+<code class="sig-name descname">finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -220,6 +259,31 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.hand_is_empty">
+<code class="sig-name descname">hand_is_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.hand_is_empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.is_attack">
+<code class="sig-name descname">is_attack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.is_attack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.is_defend">
+<code class="sig-name descname">is_defend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.is_defend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.is_finished">
+<code class="sig-name descname">is_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.is_finished" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Agent.DurakPlayer.is_wait">
+<code class="sig-name descname">is_wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.is_wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="Agent.DurakPlayer.wait">

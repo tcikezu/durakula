@@ -1,4 +1,4 @@
-import numpy as np
+from utils import *
 from Field import DurakField
 from Cards import DurakDeck
 from Agent import DurakPlayer
@@ -106,30 +106,41 @@ class DurakHands:
 
 class DurakGame(Game):
     """State machine for game of Durak."""
-    def __init__(self, n_players: int, deck_mode: str) -> None:
+    def __init__(self, n_players: int, deck_mode: str, dealer = False) -> None:
         # self.n_players = n_players
         self.players = []
         self.playing_field = None
         self.init_field = None
         self.hands = None
+        self.n_players = n_players
+
+        # At some point I want to make an additional player called `dealer' that gets to select the index at which they cut the deck and shuffle however they want `
 
         # Unsure if we want to begin game upon game construction.
         # Maybe we want to call this externally.
-        self.begin_game(n_players, deck_mode)
+        self.begin_game(deck_mode)
 
-    def begin_game(self, n_players, deck_mode):
+    def begin_game(self, deck_mode):
         """Deck is first shuffled, then 6 cards are dealt to each of the players. Finally the game's `Field` object is initialized."""
         # Create a deck object.
         deck = DurakDeck(mode=deck_mode)
 
-        # Shuffle the deck.
+        # Shuffle and cut the deck.
         deck.shuffle()
+        deck.cut()
 
         # Initialize the players and hands
-        self.hands = DurakHands(deck, n_players)
-        for player_id in range(n_players):
+        self.hands = DurakHands(deck, self.n_players)
+        for player_id in range(self.n_players):
             self.hands.get_hand_from_deck(deck.draw_card(6), player_id)
             self.players += [DurakPlayer(self.hands[player_id], player_id, deck.trump_idx)]
+
+        # Decide who gets to attack and defend.
+        weakest_players = [(id, np.argmax(p.hand[0,:])) for id, p in enumerate(self.players)]
+        shuffle(weakest_players)
+        attack_id = min(weakest_players, key=lambda x: x[1])[0]
+        self.players[attack_id].attack()
+        self.players[(attack_id + 1) % self.n_players].defend()
 
         # Initialize the Field
         self.playing_field = DurakField(deck, self.hands, self.players)
@@ -146,6 +157,62 @@ class DurakGame(Game):
             player_id (int): index for player
         """
         return len(self.Field.get_legal_moves(player_id))
+
+    def get_valid_moves(self, player_id):
+        return self.playing_field.get_legal_moves(player_id)
+
+    def get_next_state(self, action, player_id):
+        """This function gets the state of the next field, given a player_id and the move they perform. If player is in wait mode, then we can just move on to next player. If player is in attack mode, then we execute the move, and then have defending player make a move. If player is in defend mode, then we let them execute the move, then depending on whether field is active / inactive, allow the next attacking player to make a move."""
+
+        player = self.players[player_id]
+        if player.is_attack() or player.is_defend():
+            self.playing_field.execute_move(action, player_id)
+        if player.is_wait() or player.is_finished():
+            return self.playing_field, (player_id + 1) % self.n_players
+
+        defend_id = self.playing_field.defend_player().player_id
+        attack_ids = [p.player_id for p in self.playing_field.attack_players()]
+
+        if self.playing_field.field_active == False:
+            # Retrieve indices of those who attacked
+            indices = np.unique(self.playing_field.attack_order, return_index = True)[1]
+            # Obtain player ids of those that attacked, in order of attack
+            unique_attack_order = [self.playing_field.attack_order[i] for i in sorted(indices)]
+
+            # Draw from deck.
+            deck = self.playing_field.drawing_deck
+            for id in unique_attack_order:
+                # Draw either enough cards to have 6 cards, or no cards.
+                if len(deck) > 0:
+                    self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)), id)
+            if len(deck) > 0:
+                self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[defend_id]),0)), defend_id)
+
+            player.attack()
+            self.players[(defend_id + 1) % self.n_players].defend()
+            self.playing_field.clear_field()
+
+            return self.playing_field, player_id
+        else:
+            if player.is_defend():
+                # Pass logic -- if a player plays the same value as those of attack.
+                if self.playing_field.first_attack:
+                    defend_id = player_id
+                    if np.sum((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals) == 0:
+                        player.attack()
+                        defend_id = (player_id + 1) % self.n_players
+                        self.players[defend_id].defend()
+                    for id in range(self.n_players):
+                        if defend_id != id:
+                            self.players[id].attack()
+                    self.playing_field.first_attack = False
+                    return self.playing_field, (defend_id + 1) % self.n_players
+                # If no pass, then we choose the next attacking player randomly.
+                else:
+                    return self.playing_field, choice(attack_ids)
+            # If player is attacking, then next player has to be the defender.
+            if player.is_attack():
+                return self.playing_field, defend_id
 
     def get_game_ended(self):
         """Will return True when game is over."""
