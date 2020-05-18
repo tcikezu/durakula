@@ -123,7 +123,7 @@
 <p>State machine for game of Durak.</p>
 <dl class="py method">
 <dt id="Game.DurakGame.begin_game">
-<code class="sig-name descname">begin_game</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_players</span></em>, <em class="sig-param"><span class="n">deck_mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.begin_game" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">begin_game</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck_mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.begin_game" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deck is first shuffled, then 6 cards are dealt to each of the players. Finally the game’s <cite>Field</cite> object is initialized.</p>
 </dd></dl>
 
@@ -190,6 +190,22 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Field.Field</span></code></p>
 <p>This class defines legal moves you can make in a game of Durak, given every players’ hands and the current cards played on the field.</p>
 <dl class="py method">
+<dt id="Field.DurakField.attack_players">
+<code class="sig-name descname">attack_players</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.attack_players" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Field.DurakField.clear_field">
+<code class="sig-name descname">clear_field</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.clear_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear field after a defender has successfully defended or given up.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Field.DurakField.defend_player">
+<code class="sig-name descname">defend_player</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.defend_player" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="Field.DurakField.defense_combinations">
 <code class="sig-name descname">defense_combinations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">valid_defenses</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#Field.DurakField.defense_combinations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns every possible defense given valid_defenses.</p>
@@ -198,7 +214,8 @@
 <dl class="py method">
 <dt id="Field.DurakField.execute_move">
 <code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">move</span></em>, <em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute a move for the given player.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.field_is_empty">
@@ -206,15 +223,22 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="Field.DurakField.first_attack_combinations">
+<code class="sig-name descname">first_attack_combinations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">valid_attacks</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">L</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#Field.DurakField.first_attack_combinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first attack can only be cards of the same value.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Field.DurakField.get_legal_moves">
 <code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.get_legal_moves" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of legal moves for the given player.</p>
+<dd><p>Returns a list of legal moves. The basic moves are to attack, or to defend. If player mode is set to finished or wait, then no move can be performed.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.has_legal_moves">
 <code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.has_legal_moves" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A player has legal moves so long as their hand isn’t empty.</p>
+</dd></dl>
 
 </dd></dl>
 

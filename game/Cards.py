@@ -44,8 +44,9 @@ class CardCollection:
         self.cards = other.cards
 
     def __add__(self, other):
+        """This follows the convention that the other CardCollection we're adding is going on top of this CardCollection."""
         self.cards += other.cards
-        self.order += other.order
+        self.order = other.order + self.order
         assert(self.cards.all() == 0 or self.cards.all() == 1), 'Oops! we have 2 or more of the same card.'
         return self
 
