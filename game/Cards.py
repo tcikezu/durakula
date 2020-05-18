@@ -25,6 +25,9 @@ class CardCollection:
 
     def __getitem__(self, idx):
         """Returns the string representation of card at specified position."""
+        if self.__len__() == 0:
+            print("Deck is empty.")
+            return None
         if self.cards.size == 52:
             return _CARD_MAP_SMALL[self.order[idx]]
         if self.cards.size == 36:
@@ -56,6 +59,7 @@ class CardCollection:
 
     def __str__(self):
         head = '--- Card Collection ---\n'
+
         if self.cards.size == 52:
             card_str = 'Cards: ' + ','.join([_CARD_MAP_FULL[idx] for idx in self.order]) + '.\n'
         elif self.cards.size == 36:
@@ -74,6 +78,9 @@ class CardCollection:
         Returns:
             suit (str): the suit of the card at specified position.
         """
+        if self.__len__() == 0:
+            print("Deck is empty.")
+            return None
         return _SUITS[self.order[idx][0]]
 
     def value(self, idx:int) -> int:
@@ -84,6 +91,9 @@ class CardCollection:
         Returns:
             value (int): the value of the card at specified position.
         """
+        if self.__len__() == 0:
+            print("Deck is empty.")
+            return None
         return _VALUES[self.order[idx][1]]
 
     def draw_card(self,n=1):
@@ -91,6 +101,10 @@ class CardCollection:
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = CardCollection(n_suits = self.cards.shape[0], n_vals = self.cards.shape[1])
         drawn_card.empty()
+
+        if self.__len__() == 0:
+            return drawn_card
+
         for i in range(n):
             idx = self.order.popleft()
             self.cards[idx] = 0
@@ -135,8 +149,14 @@ class DurakDeck(CardCollection):
             self.cards = cards
             self.order = None
             self.reorder()
-        self.trump_suit = self.suit(-1)
-        self.trump_idx = self.order[-1][0]
+
+
+        if self.__len__() != 0:
+            self.trump_suit = self.suit(-1)
+            self.trump_idx = self.order[-1][0]
+        else:
+            self.trump_suit = None
+            self.trump_idx = None
 
     def _apply_mode(self):
         if self.mode == 'full':
@@ -151,6 +171,10 @@ class DurakDeck(CardCollection):
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = DurakDeck(mode = self.mode)
         drawn_card.empty()
+
+        if self.__len__() == 0:
+            return drawn_card
+
         for i in range(min(n, len(self.order))):
             idx = self.order.popleft()
             self.cards[idx] = 0

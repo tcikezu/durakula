@@ -174,7 +174,13 @@ class DurakField(Field):
         attacks = np.unique(np.argwhere(valid_defenses)[:,1])
         defends = np.unique(np.argwhere(valid_defenses)[:,0])
 
-        assert(len(attacks) <= len(defends)), "Attacked with more cards than the defender has."
+        # Base case - can't use the same card to defend multiple attacks.
+        if len(attacks) > len(defends):
+            return [_ACTION_GIVEUP]
+
+        # Base case - can't reduce the number of attacks
+        if np.sum(self.attacks) > len(attacks):
+            return [_ACTION_GIVEUP]
 
         def valid(c):
             """A valid defense move is one where the number of unique defend cards equals the number of unique attack cards."""
@@ -208,7 +214,7 @@ class DurakField(Field):
             current_buffer = np.zeros_like(player.buffer)
             if len(move) == 0: # Nothing to defend.
                 # A successful defense occured.
-                if len([p for p in self.players if p.is_attack() == False]) == self.n_players - 1:
+                if len(self.attack_players()) == 0:
                     self.field_active = False
                 # The defense continues.
                 else:
@@ -233,6 +239,8 @@ class DurakField(Field):
             pass
 
         if player.hand_is_empty():
+            if player.is_defend():
+                self.field_active = False
             player.finished()
 
     @staticmethod
