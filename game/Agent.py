@@ -29,25 +29,29 @@ class DurakPlayer(Agent):
     def clear_buffer(self):
         self.buffer *= 0
 
-    def wait(self):
+    def wait(self) -> None:
+        """Change player mode to wait."""
         self.player_mode = _WAIT
-    def attack(self):
+    def attack(self) -> None:
+        """Change player mode to attack."""
         self.player_mode = _ATTACK
-    def defend(self):
+    def defend(self) -> None:
+        """Change player mode to defend."""
         self.player_mode = _DEFEND
-    def finished(self):
+    def finished(self) -> None:
+        """Change player mode to finished."""
         self.player_mode = _FINISHED
 
-    def is_wait(self):
+    def is_wait(self) -> bool:
         return self.player_mode == _WAIT
-    def is_attack(self):
+    def is_attack(self) -> bool:
         return self.player_mode == _ATTACK
-    def is_defend(self):
+    def is_defend(self) -> bool:
         return self.player_mode == _DEFEND
-    def is_finished(self):
+    def is_finished(self) -> bool:
         return self.player_mode == _FINISHED
 
-    def hand_is_empty(self):
+    def hand_is_empty(self) -> bool:
         return np.sum(self.hand) == 0
 
     def get_deck_from_hand(self) -> DurakDeck:

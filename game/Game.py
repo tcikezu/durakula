@@ -121,7 +121,7 @@ class DurakGame(Game):
         self.begin_game(deck_mode)
 
     def begin_game(self, deck_mode):
-        """Deck is first shuffled, then 6 cards are dealt to each of the players. Finally the game's `Field` object is initialized."""
+        """Deck is shuffled, then cut. 6 cards are dealt to each of the players. Finally the playing field (`Field`) is initialized."""
         # Create a deck object.
         deck = DurakDeck(mode=deck_mode)
 
@@ -162,7 +162,12 @@ class DurakGame(Game):
         return self.playing_field.get_legal_moves(player_id)
 
     def get_next_state(self, action, player_id):
-        """This function gets the state of the next field, given a player_id and the move they perform. If player is in wait mode, then we can just move on to next player. If player is in attack mode, then we execute the move, and then have defending player make a move. If player is in defend mode, then we let them execute the move, then depending on whether field is active / inactive, allow the next attacking player to make a move."""
+        """Updates the state of the playing field (`Field.DurakField`) after player (`Agent.DurakPlayer`) performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (`Cards.DurakDeck`) is unempty.
+
+        Args:
+            action (tuple) or (str): Action player will take.
+            player_id (int): Index of player
+        ."""
 
         player = self.players[player_id]
         if player.is_attack() or player.is_defend():

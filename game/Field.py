@@ -165,7 +165,7 @@ class DurakField(Field):
         return self.players[player_id].hand_is_empty()
 
     def execute_move(self, move, player_id: int):
-        """Execute a move for the given player."""
+        """Execute a move for the given player. Evaluates whether the player has finished their game (ie run out of cards) at the end of move."""
         player = self.players[player_id]
         if player.is_attack():
             current_buffer = np.zeros_like(player.buffer)

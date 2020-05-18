@@ -1,4 +1,4 @@
-from utils import *
+import numpy as np
 import random
 from collections import deque
 
@@ -24,20 +24,11 @@ class CardCollection:
         self.reorder()
 
     def __getitem__(self, idx):
+        """Returns the string representation of card at specified position."""
         if self.cards.size == 52:
             return _CARD_MAP_SMALL[self.order[idx]]
         if self.cards.size == 36:
             return _CARD_MAP_FULL[self.order[idx]]
-
-    def __setitem__(self, idx, value):
-        if value == 1:
-            self.order.appendleft(self.order[idx])
-            self.cards[self.order[idx]] = 1
-        elif value == 0:
-            self.order.remove(self.order[idx])
-            self.cards[self.order[idx]] = 0
-        else:
-            ValueError('INVALID VALUE (MUST BE 0 OR 1)')
 
     def __eq__(self, other):
         self.order = other.order
@@ -60,6 +51,7 @@ class CardCollection:
     # def __next__(self):
     #     pass
     def __len__(self):
+        """Length of deck."""
         return len(self.order)
 
     def __str__(self):
@@ -75,19 +67,33 @@ class CardCollection:
         return head + card_str + size_str + tail
 
     def suit(self, idx:int) -> str:
+        """Return the suit of the card at specified position.
+
+        Args:
+            idx (int): position at which we want to know the suit.
+        Returns:
+            suit (str): the suit of the card at specified position.
+        """
         return _SUITS[self.order[idx][0]]
 
     def value(self, idx:int) -> int:
+        """Return the value of the card at specified position.
+
+        Args:
+            idx (int): position at which we want to know the card value.
+        Returns:
+            value (int): the value of the card at specified position.
+        """
         return _VALUES[self.order[idx][1]]
 
     def draw_card(self,n=1):
-        """Draw (ie, pop) according to an order."""
+        """Draw n cards from the top of the deck."""
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = CardCollection(n_suits = self.cards.shape[0], n_vals = self.cards.shape[1])
         drawn_card.empty()
         for i in range(n):
-            idx = self.order[0]
-            self.__setitem__(0, 0)
+            idx = self.order.popleft()
+            self.cards[idx] = 0
             drawn_card.cards[idx] = 1
             drawn_card.order.appendleft(idx)
         return drawn_card
@@ -99,12 +105,18 @@ class CardCollection:
         return self
 
     def reorder(self):
-        self.order = deque(indices_of_ones(self.cards))
+        self.order = deque([i for i,v in np.ndenumerate(self.cards) if v == 1])
 
     def shuffle(self):
+        """Randomly shuffle the ordering."""
         random.shuffle(self.order)
 
     def cut(self, idx=None):
+        """Split the deck in two, then re-order.
+
+        Args:
+            idx (int): when None, will choose a random place to cut. Otherwise, will cut at specified index.
+        """
         if idx == None:
             idx = random.choice(range(len(self.order)))
         self.order.rotate(idx)
@@ -135,13 +147,13 @@ class DurakDeck(CardCollection):
             self.n_vals = 9
 
     def draw_card(self,n=1):
-        """Draw (ie, pop) according to an order."""
+        """Draw n cards from the top of the deck."""
         #drawn_card = np.zeros((self.n_suits, self.n_vals)).astype(int)
         drawn_card = DurakDeck(mode = self.mode)
         drawn_card.empty()
         for i in range(min(n, len(self.order))):
-            idx = self.order[0]
-            self.__setitem__(0, 0)
+            idx = self.order.popleft()
+            self.cards[idx] = 0
             drawn_card.cards[idx] = 1
             drawn_card.order.appendleft(idx)
         return drawn_card
