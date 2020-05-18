@@ -49,8 +49,9 @@ class DurakField(Field):
         # the first row of attacks and defends is always the trump suit
         # the first 13 rows and 13 columns of field also correspond to trump suit
         self.field = np.zeros((deck.cards.size, deck.cards.size))
-        self.field_buffer = np.zeros_like(self.field)
+        # self.field_buffer = np.zeros_like(self.field)
         self.attacks = np.zeros_like(deck.cards)
+        self.attack_buffer = np.zeros_like(self.attacks)
 
 
     def __str__(self):
@@ -64,13 +65,14 @@ class DurakField(Field):
         return head + drawing_deck_str + ''.join(player_str_list) + trump_str + tail
 
     def field_is_empty(self) -> bool:
-        """Returns whether the field is empty. (Maybe we don't need this method? Or we might want to use this for assert statements.)"""
+        """Returns whether the field is empty."""
         return np.sum(self.field).astype('int') == 0
 
     def clear_field(self):
         """Clear field after a defender has successfully defended or given up. Make all that aren't finished in wait mode."""
         self.field *= 0
         self.attacks *= 0
+        self.attack_buffer *= 0
         for p in self.players:
             if p.is_finished() == False:
                 p.clear_buffer()
@@ -211,15 +213,19 @@ class DurakField(Field):
                 # The defense continues.
                 else:
                     self.field_active = True
+                    self.attack_buffer += self.attacks
+                    self.attacks *= 0
             elif move == _ACTION_GIVEUP:
-                player.hand += self.attacks
+                player.hand += self.attacks + self.attack_buffer + player.buffer
                 self.field_active = False
-            else:
+            else: # The defense continues.
                 for m in move:
                     current_buffer[m[0] // self.n_vals, m[0] % self.n_vals] = 1
                     self.field[m] = 1
                 player.hand -= current_buffer
                 player.buffer += current_buffer
+                self.attack_buffer += self.attacks
+                self.attacks *= 0
 
         elif player.is_wait():
             pass

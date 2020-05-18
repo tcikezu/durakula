@@ -228,7 +228,7 @@ class DurakGame(Game):
                 if self.players[id].is_finished() == False:
                     if len(deck) > 0:
                         self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)), id)
-                        
+
             # Reset the field.
             self.playing_field.clear_field()
 
@@ -242,10 +242,12 @@ class DurakGame(Game):
                 # See if attack is passed along to next player:
                 if self.playing_field.first_attack:
 
-                    # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. All pass does is move defend position.
-                    if np.sum((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals) == 0: # if pass is true
+                    # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. All pass does is move defend position. Note -- we do not need to ensure field wasn't empty, because field is active AND it was the first attack.
+                    if np.sum(np.abs((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals)) == 0): # if pass is true
                         if player.is_finished() == False:
                             player.attack() # Then player is now attacking or finished.
+                            self.playing_field.attacks += player.buffer + self.playing_field.attack_buffer
+                            self.playing_field.attack_buffer += player.buffer
 
                         # Pass the attack.
                         new_defend_id = self.next_player(player_id)
