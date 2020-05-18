@@ -52,7 +52,7 @@
 <dl class="py method">
 <dt id="Cards.CardCollection.draw_card">
 <code class="sig-name descname">draw_card</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection.draw_card" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw (ie, pop) according to an order.</p>
+<dd><p>Draw n cards from the top of the deck.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -75,12 +75,36 @@
 <dl class="py method">
 <dt id="Cards.CardCollection.suit">
 <code class="sig-name descname">suit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#Cards.CardCollection.suit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the suit of the card at specified position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – position at which we want to know the suit.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the suit of the card at specified position.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>suit (str)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Cards.CardCollection.value">
 <code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#Cards.CardCollection.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the value of the card at specified position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – position at which we want to know the card value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of the card at specified position.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>value (int)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -92,7 +116,7 @@
 <dl class="py method">
 <dt id="Cards.DurakDeck.draw_card">
 <code class="sig-name descname">draw_card</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.DurakDeck.draw_card" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw (ie, pop) according to an order.</p>
+<dd><p>Draw n cards from the top of the deck.</p>
 </dd></dl>
 
 </dd></dl>
@@ -169,7 +193,6 @@
 </ul>
 </dd>
 </dl>
-<p>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -190,6 +213,16 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="Game.DurakGame.next_player">
+<code class="sig-name descname">next_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.next_player" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="Game.DurakGame.previous_player">
+<code class="sig-name descname">previous_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.previous_player" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="Game.DurakGame.string_representation">
 <code class="sig-name descname">string_representation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.string_representation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print string representation of field.</p>
@@ -208,18 +241,20 @@
 <dl class="py method">
 <dt id="Field.DurakField.attack_players">
 <code class="sig-name descname">attack_players</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.attack_players" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a list of players that are attacking.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.clear_field">
 <code class="sig-name descname">clear_field</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.clear_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clear field after a defender has successfully defended or given up.</p>
+<dd><p>Clear field after a defender has successfully defended or given up. Make all that aren’t finished in wait mode.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.defend_player">
 <code class="sig-name descname">defend_player</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.defend_player" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the player that is currently defending.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.defense_combinations">
@@ -235,8 +270,9 @@
 
 <dl class="py method">
 <dt id="Field.DurakField.field_is_empty">
-<code class="sig-name descname">field_is_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.field_is_empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">field_is_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Field.DurakField.field_is_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the field is empty. (Maybe we don’t need this method? Or we might want to use this for assert statements.)</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.first_attack_combinations">
@@ -247,7 +283,7 @@
 <dl class="py method">
 <dt id="Field.DurakField.get_legal_moves">
 <code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.get_legal_moves" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of legal moves. The basic moves are to attack, or to defend. If player mode is set to finished or wait, then no move can be performed.</p>
+<dd><p>Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed.</p>
 </dd></dl>
 
 <dl class="py method">

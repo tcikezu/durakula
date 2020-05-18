@@ -49,6 +49,7 @@ class DurakField(Field):
         # the first row of attacks and defends is always the trump suit
         # the first 13 rows and 13 columns of field also correspond to trump suit
         self.field = np.zeros((deck.cards.size, deck.cards.size))
+        self.field_buffer = np.zeros_like(self.field)
         self.attacks = np.zeros_like(deck.cards)
 
 
@@ -62,34 +63,39 @@ class DurakField(Field):
         tail = '---------------------\n'
         return head + drawing_deck_str + ''.join(player_str_list) + trump_str + tail
 
-    def field_is_empty(self):
+    def field_is_empty(self) -> bool:
+        """Returns whether the field is empty. (Maybe we don't need this method? Or we might want to use this for assert statements.)"""
         return np.sum(self.field).astype('int') == 0
 
     def clear_field(self):
-        """Clear field after a defender has successfully defended or given up."""
+        """Clear field after a defender has successfully defended or given up. Make all that aren't finished in wait mode."""
         self.field *= 0
         self.attacks *= 0
         for p in self.players:
-            p.clear_buffer()
+            if p.is_finished() == False:
+                p.clear_buffer()
+                p.wait()
         self.first_attack = True
         self.field_active = True
         self.attack_order = []
 
     def defend_player(self):
+        """Returns the player that is currently defending."""
         return [p for p in self.players if p.is_defend()][0]
 
     def attack_players(self):
+        """Returns a list of players that are attacking."""
         return [p for p in self.players if p.is_attack()]
 
     def get_legal_moves(self, player_id: int):
-        """Returns a list of legal moves. The basic moves are to attack, or to defend. If player mode is set to finished or wait, then no move can be performed."""
+        """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed."""
         player = self.players[player_id]
         if player.is_defend():
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
 
             # Successful defense -- nobody attacks.
-            if len(attack_idxs) == 0 and len([p for p in self.players if p.is_wait()]) == self.n_players - 1:
+            if len(attack_idxs) == 0:
                 return [()]
 
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
@@ -170,7 +176,8 @@ class DurakField(Field):
         if player.is_attack():
             current_buffer = np.zeros_like(player.buffer)
             if len(move) == 0: # Wait.
-                player.wait()
+                # player.wait()
+                pass
             else:
                 self.attack_order.append(player_id)
                 for m in move:
@@ -180,8 +187,13 @@ class DurakField(Field):
                 player.hand -= current_buffer
         elif player.is_defend():
             current_buffer = np.zeros_like(player.buffer)
-            if len(move) == 0: # Successful defense
-                self.field_active = False
+            if len(move) == 0: # Nothing to defend.
+                # A successful defense occured.
+                if len([p for p in self.players if p.is_attack() == False]) == self.n_players - 1:
+                    self.field_active = False
+                # The defense continues.
+                else:
+                    self.field_active = True
             if move == _ACTION_GIVEUP:
                 player.hand += self.attacks
                 self.field_active = False
