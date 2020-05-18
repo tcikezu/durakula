@@ -243,7 +243,7 @@ class DurakGame(Game):
                 if self.playing_field.first_attack:
 
                     # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. All pass does is move defend position. Note -- we do not need to ensure field wasn't empty, because field is active AND it was the first attack.
-                    if np.sum(np.abs((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals)) == 0): # if pass is true
+                    if np.sum(np.abs((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals)) == 0: # if pass is true
                         if player.is_finished() == False:
                             player.attack() # Then player is now attacking or finished.
                             self.playing_field.attacks += player.buffer + self.playing_field.attack_buffer
@@ -289,7 +289,7 @@ class DurakGame(Game):
             # If player was attacking, then next player has to be the defender.
             if player.is_attack():
                 # Chose to do nothing.
-                if len(move) == 0:
+                if len(action) == 0:
                     player.wait()
 
                     # Choose a new attacker.
