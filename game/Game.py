@@ -101,7 +101,7 @@ class DurakHands:
         assert(deck.mode == self.mode), "Oops! Invalid deck mode!"
         indices = list(range(deck.n_suits))
         indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        self.hands[player_idx] = deck.cards[indices]
+        self.hands[player_idx] += deck.cards[indices]
         return self.hands[player_idx]
 
 class DurakGame(Game):
@@ -201,9 +201,6 @@ class DurakGame(Game):
         if self.playing_field.field_active == False:
             assert(player.is_defend()), f'Expected defend, instead got !{player.player_mode}'
 
-            # Reset the field.
-            self.playing_field.clear_field()
-
             # A successful defense happened.
             if len(action) == 0:
                 if player.is_finished():
@@ -231,7 +228,12 @@ class DurakGame(Game):
                 if self.players[id].is_finished() == False:
                     if len(deck) > 0:
                         self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)), id)
+                        
+            # Reset the field.
+            self.playing_field.clear_field()
 
+            self.players[new_attack_id].attack()
+            self.players[new_defend_id].defend()
             return self.playing_field, new_attack_id
         else:
             # Field is still active. If player was defending, then it's another player's turn to attack, unless player passed along the attack. If player was attacking, then it's the defender's turn to defend.

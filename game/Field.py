@@ -211,7 +211,7 @@ class DurakField(Field):
                 # The defense continues.
                 else:
                     self.field_active = True
-            if move == _ACTION_GIVEUP:
+            elif move == _ACTION_GIVEUP:
                 player.hand += self.attacks
                 self.field_active = False
             else:
