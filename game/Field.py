@@ -238,7 +238,8 @@ class DurakField(Field):
         elif player.is_finished():
             pass
 
-        if player.hand_is_empty() and len(self.drawing_deck) == 0:
+        # Note - even if there are cards remaining, an empty hand at end of round means you've finished play.
+        if player.hand_is_empty():
             if player.is_defend():
                 self.field_active = False
             player.finished()
