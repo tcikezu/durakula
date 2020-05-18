@@ -10,6 +10,7 @@ def list_nonzero_combinations(v: np.ndarray, L: int) -> list:
     """Returns a list of every combination of indices of elements equal to 1, where number of indices range from 1 to L."""
     idxs = indices_of_ones(v)
     list_combinations = []
-    for r in range(1, L+1):
-        list_combinations += [c for c in combinations(idxs, r)]
+    if len(idxs) > 0:
+        for r in range(1, L+1):
+            list_combinations += [c for c in combinations(idxs, r)]
     return list_combinations

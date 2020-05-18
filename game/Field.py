@@ -88,7 +88,7 @@ class DurakField(Field):
         return [p for p in self.players if p.is_attack()]
 
     def get_legal_moves(self, player_id: int):
-        """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed."""
+        """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed. A player in defense can always give up. If first attack, then attack must be performed."""
         player = self.players[player_id]
         if player.is_defend():
             # Assuming there are attacks in self.attacks
@@ -100,38 +100,50 @@ class DurakField(Field):
 
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
             valid_defenses = np.zeros_like(self.field)
+
+            # Compute the suit ceil -- ie, 13, 26, 39, 52 depending on x's suit
             f = lambda x : (x // self.n_vals + 1)*self.n_vals
 
+            # All cards that are same suit, higher value than those of attacks.
             for att_idx in attack_idxs:
                 valid_defenses[att_idx + 1 : f(att_idx), att_idx] = 1
+            # All trump cards
             for att_idx in nontrump_attack_idxs:
                 valid_defenses[:self.n_vals, att_idx] = 1
 
+            # All cards of same value as attacks.
             if self.first_attack:
                 valid_defenses[att_idx % self.n_vals : att_idx % self.n_vals + self.n_suits*self.n_vals : self.n_vals, att_idx] = 1
 
-            valid_defenses *= player.hand.ravel()[:,np.newaxis]
+            valid_defenses *= player.hand.ravel()[:,np.newaxis] # Mask with player's hand.
+
+            # Compute all possible defend moves.
             list_def_combinations = self.defense_combinations(valid_defenses)
-            if len(list_def_combinations) == 0:
-                return [_ACTION_GIVEUP]
-            else:
-                return list_def_combinations
+            return list_def_combinations
 
         elif player.is_attack():
             # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
 
             if self.first_attack:
+                # For first attack, entire hand is valid.
                 valid_attacks = player.hand
-                # L - the maximum number of cards we can attack with.
+
+                # L - the maximum number of cards we can attack with. Cannot attack with more than what the defender has.
                 L = min(np.sum(valid_attacks), len(self.defend_player()))
+
+                # Note: if first attack, then not attacking is not an option.
                 return self.first_attack_combinations(valid_attacks, L)
             else:
+                # Add all values on the table to valid_attacks.
                 attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
                 valid_attacks[:,attack_idxs % self.n_vals] = 1
-                valid_attacks *= player.hand
-                # L - the maximum number of cards we can attack with.
+                valid_attacks *= player.hand # Mask with player's hand.
+
+                # L - the maximum number of cards we can attack with. Cannot attack with more than what the defender has.
                 L = min(np.sum(valid_attacks), len(self.defend_player()))
+
+                # Note - if not first attack, then one can choose to not attack. Valid attacks are any number of cards whose value matches that on the table.
                 return list_nonzero_combinations(valid_attacks, L) + [()]
         elif player.is_wait() or player.is_finished():
             return []
@@ -153,24 +165,29 @@ class DurakField(Field):
     def defense_combinations(self, valid_defenses: np.ndarray) -> list:
         """Returns every possible defense given valid_defenses."""
         idxs = indices_of_ones(valid_defenses)
+
+        # Base case - there is no defense we can do.
+        if len(idxs) == 0:
+            return [_ACTION_GIVEUP]
         attacks = np.unique(np.argwhere(valid_defenses)[:,1])
         defends = np.unique(np.argwhere(valid_defenses)[:,0])
-        if len(attacks) > len(defends):
-            return []
+
+        assert(len(attacks) <= len(defends)), "Attacked with more cards than the defender has."
 
         def valid(c):
-            """Mini-function that only serves to create valid combinations."""
+            """A valid defense move is one where the number of unique defend cards equals the number of unique attack cards."""
             return len(np.unique(np.array(c)[:,0])) == len(np.unique(np.array(c)[:,1])) == len(c)
 
         r = len(attacks)
-        def_combinations = [c for c in combinations(idxs, r) if valid(c)]
+        def_combinations = [_ACTION_GIVEUP]
+        def_combinations += [c for c in combinations(idxs, r) if valid(c)]
         return def_combinations
 
-    def has_legal_moves(self, player_id: int):
+    def has_legal_moves(self, player_id: int) -> bool:
         """A player has legal moves so long as their hand isn't empty."""
         return self.players[player_id].hand_is_empty()
 
-    def execute_move(self, move, player_id: int):
+    def execute_move(self, move, player_id: int) -> None:
         """Execute a move for the given player. Evaluates whether the player has finished their game (ie run out of cards) at the end of move."""
         player = self.players[player_id]
         if player.is_attack():

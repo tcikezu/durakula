@@ -161,13 +161,15 @@ class DurakGame(Game):
     def get_valid_moves(self, player_id):
         return self.playing_field.get_legal_moves(player_id)
 
-    def next_player(self, player_id):
+    def next_player(self, player_id: int) -> int:
+        """By convention, the next valid player to the player's left."""
         for i in range(1, self.n_players):
             p = self.players[(player_id + i) % self.n_players]
             if p.is_finished() == False:
                 return p.player_id
 
-    def previous_player(self, player_id):
+    def previous_player(self, player_id: int) -> int:
+        """By convention, the next valid player to the player's right."""
         for i in range(1, self.n_players):
             p = self.players[(player_id - i) % self.n_players]
             if p.is_finished() == False:
@@ -179,6 +181,10 @@ class DurakGame(Game):
         Args:
             action (tuple) or (str): Action player will take.
             player_id (int): Index of player
+
+        Returns:
+            new_field (Field.DurakField): The field after applying action.
+            next_player_id (int): The id of player who plays in the next turn.
         """
 
         player = self.players[player_id]

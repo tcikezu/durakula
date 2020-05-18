@@ -27,6 +27,7 @@ class DurakPlayer(Agent):
         return np.sum(self.hand)
 
     def clear_buffer(self):
+        """Remove all cards from the buffer hand."""
         self.buffer *= 0
 
     def wait(self) -> None:

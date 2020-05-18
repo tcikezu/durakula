@@ -192,6 +192,13 @@
 <li><p><strong>player_id</strong> (<em>int</em>) – Index of player</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The field after applying action.
+next_player_id (int): The id of player who plays in the next turn.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>new_field (<a class="reference internal" href="#Field.DurakField" title="Field.DurakField">Field.DurakField</a>)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -214,13 +221,15 @@
 
 <dl class="py method">
 <dt id="Game.DurakGame.next_player">
-<code class="sig-name descname">next_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.next_player" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">next_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#Game.DurakGame.next_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>By convention, the next valid player to the player’s left.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakGame.previous_player">
-<code class="sig-name descname">previous_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.previous_player" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">previous_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#Game.DurakGame.previous_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>By convention, the next valid player to the player’s right.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakGame.string_representation">
@@ -264,7 +273,7 @@
 
 <dl class="py method">
 <dt id="Field.DurakField.execute_move">
-<code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">move</span></em>, <em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">execute_move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">move</span></em>, <em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#Field.DurakField.execute_move" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute a move for the given player. Evaluates whether the player has finished their game (ie run out of cards) at the end of move.</p>
 </dd></dl>
 
@@ -283,12 +292,12 @@
 <dl class="py method">
 <dt id="Field.DurakField.get_legal_moves">
 <code class="sig-name descname">get_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.get_legal_moves" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed.</p>
+<dd><p>Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed. A player in defense can always give up. If first attack, then attack must be performed.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Field.DurakField.has_legal_moves">
-<code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField.has_legal_moves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">has_legal_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Field.DurakField.has_legal_moves" title="Permalink to this definition">¶</a></dt>
 <dd><p>A player has legal moves so long as their hand isn’t empty.</p>
 </dd></dl>
 
@@ -311,7 +320,8 @@
 <dl class="py method">
 <dt id="Agent.DurakPlayer.clear_buffer">
 <code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Agent.DurakPlayer.clear_buffer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Remove all cards from the buffer hand.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Agent.DurakPlayer.defend">
