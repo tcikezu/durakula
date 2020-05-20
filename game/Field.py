@@ -28,11 +28,10 @@ _ACTION_GIVEUP = 'ACTION_GIVEUP'
 class DurakField(Field):
     """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
     # Might be useful to convert this into **kwargs
-    def __init__(self, deck, hands, players):
+    def __init__(self, deckplayers):
         """Inits DurakField with deck and players."""
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
-        self.hands = hands
         self.drawing_deck = deck
         self.n_players = len(players)
         self.players = players # list of Agent class objects

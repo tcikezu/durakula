@@ -1,6 +1,6 @@
 from utils import *
 from Field import DurakField, _ACTION_GIVEUP
-from Cards import DurakDeck
+from Cards import DurakDeck, DurakHand
 from Agent import DurakPlayer
 
 class Game:
@@ -74,36 +74,6 @@ class Game:
         """
         pass
 
-class DurakHands:
-    def __init__(self, deck, num_players):
-        self.mode = deck.mode
-        self.trump_idx = deck.trump_idx
-        self.trump_suit = deck.trump_suit
-        self.hands = np.zeros((num_players, deck.n_suits, deck.n_vals)).astype(int)
-
-    def __getitem__(self, idx):
-        return self.hands[idx]
-
-    def __setitem__(self, idx, value):
-        self.hands[idx] = value
-
-    # def __eq__(self, other_hands):
-    #     assert(self.hands.shape == other_hands.shape), "Oops! Hands shape mis-match."
-    #     self.hands = other_hands
-
-    def get_hand_from_deck(self, deck: DurakDeck, player_idx: int) -> None:
-        """Create a hand to hands from an input deck.
-
-        Args:
-            deck (DurakDeck): A `DurakDeck` instance.
-            player_idx (int): Player for whom we're creating the hand.
-        """
-        assert(deck.mode == self.mode), "Oops! Invalid deck mode!"
-        indices = list(range(deck.n_suits))
-        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        self.hands[player_idx] += deck.cards[indices]
-        return self.hands[player_idx]
-
 class DurakGame(Game):
     """State machine for game of Durak."""
     def __init__(self, n_players: int, deck_mode: str, dealer = False) -> None:
@@ -111,7 +81,6 @@ class DurakGame(Game):
         self.players = []
         self.playing_field = None
         self.init_field = None
-        self.hands = None
         self.n_players = n_players
 
         # At some point I want to make an additional player called `dealer' that gets to select the index at which they cut the deck and shuffle however they want `
@@ -126,14 +95,13 @@ class DurakGame(Game):
         deck = DurakDeck(mode=deck_mode)
 
         # Shuffle and cut the deck.
-        deck.shuffle()
+        shuffle(deck)
         deck.cut()
 
         # Initialize the players and hands
-        self.hands = DurakHands(deck, self.n_players)
         for player_id in range(self.n_players):
-            self.hands.get_hand_from_deck(deck.draw_card(6), player_id)
-            self.players += [DurakPlayer(self.hands[player_id], player_id, deck.trump_idx)]
+            new_hand = DurakHand(deck)
+            self.players += [DurakPlayer(new_hand, player_id)]
 
         # Decide who gets to attack and defend.
         weakest_players = [(id, np.argmax(p.hand[0,:])) for id, p in enumerate(self.players)]
@@ -143,7 +111,7 @@ class DurakGame(Game):
         self.players[(attack_id + 1) % self.n_players].defend()
 
         # Initialize the Field
-        self.playing_field = DurakField(deck, self.hands, self.players)
+        self.playing_field = DurakField(deck, self.players)
         self.init_field = self.playing_field
 
     def get_init_field(self):
@@ -161,14 +129,14 @@ class DurakGame(Game):
     def get_valid_moves(self, player_id):
         return self.playing_field.get_legal_moves(player_id)
 
-    def next_player(self, player_id: int) -> int:
+    def _next_player(self, player_id: int) -> int:
         """By convention, the next valid player to the player's left."""
         for i in range(1, self.n_players):
             p = self.players[(player_id + i) % self.n_players]
             if p.is_finished() == False:
                 return p.player_id
 
-    def previous_player(self, player_id: int) -> int:
+    def _previous_player(self, player_id: int) -> int:
         """By convention, the next valid player to the player's right."""
         for i in range(1, self.n_players):
             p = self.players[(player_id - i) % self.n_players]
@@ -198,7 +166,7 @@ class DurakGame(Game):
         if player.is_attack() or player.is_defend():
             self.playing_field.execute_move(action, player_id)
         if player.is_wait() or player.is_finished():
-            return self.playing_field, self.next_player(player_id)
+            return self.playing_field, self._next_player(player_id)
 
         # The playing field is only inactivated after a defending player successfully defends, or fails to defend. Thus the below case only happens if the current player is defending. This also means the next player id is new_attack_id.
         if self.playing_field.field_active == False:
@@ -207,16 +175,16 @@ class DurakGame(Game):
             # A successful defense happened.
             if len(action) == 0:
                 if player.is_finished():
-                    new_defend_id = self.next_player(player_id)
-                    new_attack_id = self.previous_player(next_player)
+                    new_defend_id = self._next_player(player_id)
+                    new_attack_id = self._previous_player(next_player)
                 else:
                     new_attack_id = player_id
-                    new_defend_id = self.next_player(new_attack_id)
+                    new_defend_id = self._next_player(new_attack_id)
 
             # Defense was unsuccessful.
             elif action == _ACTION_GIVEUP:
-                new_attack_id = self.next_player(player_id)
-                new_defend_id = self.next_player(new_attack_id)
+                new_attack_id = self._next_player(player_id)
+                new_defend_id = self._next_player(new_attack_id)
 
             assert(new_attack_id != new_defend_id), "Attack and Defend are same player!"
 
@@ -233,7 +201,7 @@ class DurakGame(Game):
                 # Draw either enough cards to have 6 cards, or no cards.
                 if self.players[id].is_finished() == False:
                     if len(deck) > 0:
-                        self.hands.get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)), id)
+                        self.players[id].hand.hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)))
                 # Is it possible for there to not be enough cards in the deck? Ie is it possible that after we draw cards, one person doesn't get to draw any cards, so they've finished? I think the game is structured so that that should never be the case.
 
             # Reset the field.
@@ -262,7 +230,7 @@ class DurakGame(Game):
 
                         # Pass the attack.
                         print('passed')
-                        new_defend_id = self.next_player(player_id)
+                        new_defend_id = self._next_player(player_id)
                         self.players[new_defend_id].defend()
 
                         # Enable all waiting to attack.

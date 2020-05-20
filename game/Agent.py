@@ -1,5 +1,4 @@
 from utils import *
-from Cards import DurakDeck
 class Agent:
     def __init__(self):
         pass
@@ -13,15 +12,14 @@ _DEFEND = 'MODE_DEFEND'
 _FINISHED = 'MODE_FINISHED'
 class DurakPlayer(Agent):
     """ All a durak player needs is a hand and an ID."""
-    def __init__(self, hand: np.ndarray, player_id: int, trump_idx: int) -> None:
-        self._trump_idx = trump_idx
+    def __init__(self, hand: DurakHand, player_id: int) -> None:
         self.hand = hand
         self.player_id = player_id
         self.player_mode = _WAIT
         self.buffer = np.zeros_like(hand)
 
     def __str__(self):
-        return str(self.player_id) + ':' + str(self.get_deck_from_hand())
+        return str(self.player_id) + ':' + str(self.hand.deck_from_hand())
 
     def __len__(self):
         return np.sum(self.hand)
@@ -55,18 +53,24 @@ class DurakPlayer(Agent):
     def hand_is_empty(self) -> bool:
         return np.sum(self.hand) == 0
 
-    def get_deck_from_hand(self) -> DurakDeck:
-        """Convert a hand into a deck object.
+    def manual_action(self) -> None:
+        action = None
+        while(action == None):
+            if self.is_defend():
+                action = input("Select an action: 0 - defend, 1 - pass.")
+            if self.is_attack():
+                action = input("Select an action: 0 - attack, 1 - pass.")
 
-        Returns:
-            deck (DurakDeck): A `DurakDeck` instance, populated with cards inside the hand.
-        """
-        indices = list(range(self.hand.shape[0]))
-        indices[0], indices[self._trump_idx] = indices[self._trump_idx], indices[0]
-        if self.hand.size == 52:
-            deck = DurakDeck(cards = self.hand[indices], mode = 'full')
-        elif self.hand.size == 36:
-            deck = DurakDeck(cards = self.hand[indices], mode = 'small')
+            if action != 0 or action != 1:
+                action = None
+        card = None
+        if action == 0:
+            card = self.select_card()
+        elif action == 1:
+            return
         else:
-            raise ValueError('INVALID HAND SIZE')
-        return deck
+            return
+
+    def select_card(self) -> str:
+        card = input('Select a card: (<SUIT><VALUE>)')
+        return card
