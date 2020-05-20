@@ -1,4 +1,5 @@
 from utils import *
+from Cards import DurakHand
 class Agent:
     def __init__(self):
         pass
@@ -10,16 +11,16 @@ _WAIT = 'MODE_WAIT'
 _ATTACK = 'MODE_ATTACK'
 _DEFEND = 'MODE_DEFEND'
 _FINISHED = 'MODE_FINISHED'
-class DurakPlayer(Agent):
+class DurakPlayer(Agent, DurakHand):
     """ All a durak player needs is a hand and an ID."""
-    def __init__(self, hand: DurakHand, player_id: int) -> None:
-        self.hand = hand
+    def __init__(self, deck: DurakDeck, player_id: int) -> None:
+        super().__init__(deck)
         self.player_id = player_id
         self.player_mode = _WAIT
         self.buffer = np.zeros_like(hand)
 
     def __str__(self):
-        return str(self.player_id) + ':' + str(self.hand.deck_from_hand())
+        return str(self.player_id) + ':' + str(self.deck_from_hand())
 
     def __len__(self):
         return np.sum(self.hand)
