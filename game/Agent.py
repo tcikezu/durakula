@@ -11,9 +11,9 @@ _WAIT = 'MODE_WAIT'
 _ATTACK = 'MODE_ATTACK'
 _DEFEND = 'MODE_DEFEND'
 _FINISHED = 'MODE_FINISHED'
-class DurakPlayer(Agent, DurakHand):
+class DurakPlayer(DurakHand):
     """ All a durak player needs is a hand and an ID."""
-    def __init__(self, deck: DurakDeck, player_id: int) -> None:
+    def __init__(self, deck, player_id: int) -> None:
         super().__init__(deck)
         self.player_id = player_id
         self.player_mode = _WAIT

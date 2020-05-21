@@ -25,7 +25,7 @@ class Card():
 class CardCollection():
     """First In Last Out collection of Card objects, implemented with collection.deque storing deck order, and np.ndarray representing cards inside the deck."""
     def __init__(self, n_suit: int, n_vals: int, fill=True):
-        assert(n_suit <=4 and n_vals <= 13), 'Deck dimensions out of bounds'
+        assert(0 < n_suit <=4 and 0 < n_vals <= 13), 'Deck dimensions out of bounds'
         if fill == True:
             self.deck = deque([Card(s,v) for s in range(n_suit) for v in range(n_vals)])
             self.cards = np.ones((n_suit, n_vals))
@@ -75,6 +75,9 @@ class CardCollection():
         self.cards *= 0
         self.order = deque()
 
+    def reorder(self):
+        self.deck = deque([Card(idx[0], idx[1]) for idx,v in np.ndenumerate(self.cards) if v == 1])
+
     def draw_card(self, n=1):
         drawn_cards = CardCollection(n_suits = self.n_suits, n_vals = self.n_vals, fill=False)
         if self.__len__() == 0:
@@ -92,11 +95,17 @@ class CardCollection():
         self.deck.rotate(idx)
 
 class DurakDeck(CardCollection):
-    def __init__(self, mode='small',fill=True):
+    def __init__(self, cards=None, mode='small',fill=True):
+        self.mode = mode
+
         if (mode == 'small'):
             super().__init__(n_suit = 4, n_vals = 9, fill=fill)
         if (mode == 'full'):
             super().__init__(n_suit = 4, n_vals = 13, fill=fill)
+
+        if cards != None:
+            self.cards = cards
+            self.reorder()
 
 class DurakHand():
     """Initialize a Durak hand by drawing 6 cards from a given deck. The hand itself is 4 x N, N being number of values in input deck. The 0'th row always corresponds to the trump suit."""
@@ -106,6 +115,7 @@ class DurakHand():
         self.get_hand_from_deck(my_deck)
         self.trump_idx = deck[-1].suit
         self.trump_suit = deck.suit(-1)
+        self.mode = my_deck.mode
 
     def hand_from_deck(self, deck):
         indices = list(range(deck.n_suits))
@@ -115,12 +125,7 @@ class DurakHand():
     def deck_from_hand(self) -> DurakDeck:
         indices = list(range(self.hand.shape[0]))
         indices[0], indices[self._trump_idx] = indices[self._trump_idx], indices[0]
-        if self.hand.size == 52:
-            deck = DurakDeck(cards = self.hand[indices], mode = 'full')
-        elif self.hand.size == 36:
-            deck = DurakDeck(cards = self.hand[indices], mode = 'small')
-        else:
-            raise ValueError('INVALID HAND SIZE')
+        deck = DurakDeck(cards = self.hand[indices], mode = self.mode)
         return deck
 
 class SpadesDeck(CardCollection):

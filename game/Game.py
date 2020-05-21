@@ -155,12 +155,10 @@ class DurakGame(Game):
             next_player_id (int): The id of player who plays in the next turn.
         """
 
-        # Immutable containers for defend and attack player ids. Note: ids are computed after the move is executed.
-
+        # Immutable containers for defend and attack player ids.
         # Moving this before execute_move because it's possible that on first attack, the attacker runs out of cards, and initial_attack_ids is empty.
-        initial_defend_id = self.playing_field.defend_player().player_id
-        initial_attack_ids = tuple([p.player_id for p in self.playing_field.attack_players()])
-
+        initial_defend_id = self.playing_field.player_in_defense().player_id
+        initial_attack_ids = tuple([p.player_id for p in self.playing_field.players_in_attack()])
 
         player = self.players[player_id]
         if player.is_attack() or player.is_defend():
@@ -206,7 +204,6 @@ class DurakGame(Game):
 
             # Reset the field.
             self.playing_field.clear_field()
-
             self.players[new_attack_id].attack()
             self.players[new_defend_id].defend()
             return self.playing_field, new_attack_id

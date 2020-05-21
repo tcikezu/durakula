@@ -80,15 +80,15 @@ class DurakField(Field):
         self.field_active = True
         self.attack_order = []
 
-    def defend_player(self):
+    def player_in_defense(self):
         """Returns the player that is currently defending."""
         return [p for p in self.players if p.is_defend()][0]
 
-    def attack_players(self):
+    def players_in_attack(self) -> list:
         """Returns a list of players that are attacking."""
         return [p for p in self.players if p.is_attack()]
 
-    def get_legal_moves(self, player_id: int):
+    def get_legal_moves(self, player_id: int) -> list:
         """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed. A player in defense can always give up. If first attack, then attack must be performed."""
         player = self.players[player_id]
         if player.is_defend():
@@ -131,7 +131,7 @@ class DurakField(Field):
                 valid_attacks = player.hand
 
                 # L - the maximum number of cards we can attack with. Cannot attack with more than what the defender has.
-                L = min(np.sum(valid_attacks), len(self.defend_player()))
+                L = min(np.sum(valid_attacks), len(self.player_in_defense()))
 
                 # Note: if first attack, then not attacking is not an option.
                 return self.first_attack_combinations(valid_attacks, L)
@@ -142,7 +142,7 @@ class DurakField(Field):
                 valid_attacks *= player.hand # Mask with player's hand.
 
                 # L - the maximum number of cards we can attack with. Cannot attack with more than what the defender has.
-                L = min(np.sum(valid_attacks), len(self.defend_player()))
+                L = min(np.sum(valid_attacks), len(self.player_in_defense()))
 
                 # Note - if not first attack, then one can choose to not attack. Valid attacks are any number of cards whose value matches that on the table.
                 return list_nonzero_combinations(valid_attacks, L) + [()]
@@ -213,7 +213,7 @@ class DurakField(Field):
             current_buffer = np.zeros_like(player.buffer)
             if len(move) == 0: # Nothing to defend.
                 # A successful defense occured.
-                if len(self.attack_players()) == 0:
+                if len(self.players_in_attack()) == 0:
                     self.field_active = False
                 # The defense continues.
                 else:
