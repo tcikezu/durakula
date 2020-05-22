@@ -14,13 +14,13 @@ _FINISHED = 'MODE_FINISHED'
 class DurakPlayer(DurakHand):
     """ All a durak player needs is a hand and an ID."""
     def __init__(self, deck, player_id: int) -> None:
-        super().__init__(deck)
+        super().__init__(deck) 
         self.player_id = player_id
         self.player_mode = _WAIT
-        self.buffer = np.zeros_like(hand)
+        self.buffer = np.zeros_like(self.hand)
 
     def __str__(self):
-        return str(self.player_id) + ':' + str(self.deck_from_hand())
+        return str(self.player_id) + ':' + str(self.get_deck_from_hand())
 
     def __len__(self):
         return np.sum(self.hand)

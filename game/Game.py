@@ -100,8 +100,7 @@ class DurakGame(Game):
 
         # Initialize the players and hands
         for player_id in range(self.n_players):
-            new_hand = DurakHand(deck)
-            self.players += [DurakPlayer(new_hand, player_id)]
+            self.players += [DurakPlayer(deck, player_id)]
 
         # Decide who gets to attack and defend.
         weakest_players = [(id, np.argmax(p.hand[0,:])) for id, p in enumerate(self.players)]
@@ -199,7 +198,7 @@ class DurakGame(Game):
                 # Draw either enough cards to have 6 cards, or no cards.
                 if self.players[id].is_finished() == False:
                     if len(deck) > 0:
-                        self.players[id].hand.hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)))
+                        self.players[id].get_hand_from_deck(deck.draw_card(max(6 - len(self.players[id]),0)))
                 # Is it possible for there to not be enough cards in the deck? Ie is it possible that after we draw cards, one person doesn't get to draw any cards, so they've finished? I think the game is structured so that that should never be the case.
 
             # Reset the field.

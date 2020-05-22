@@ -36,14 +36,14 @@
 <span id="the-cards-module"></span><h2>The <code class="docutils literal notranslate"><span class="pre">Cards</span></code> module<a class="headerlink" href="#module-Cards" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="Cards.Card">
-<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">Card</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">suit</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Card" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">Card</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">suit_idx</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">value_idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.Card" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Map keys: (suit, value) to value (string inside _CARD_MAP_FULL). Additional string method outputs card as ‘value’ of ‘suit’ – e.g., ‘Ace’ of ‘Spades’.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="Cards.CardCollection">
-<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">CardCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suit</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">n_vals</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">fill</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Cards.</code><code class="sig-name descname">CardCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suits</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">n_vals</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">fill</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>First In Last Out collection of Card objects, implemented with collection.deque storing deck order, and np.ndarray representing cards inside the deck.</p>
 <dl class="py method">
@@ -67,16 +67,6 @@
 <code class="sig-name descname">reorder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Cards.CardCollection.reorder" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="Cards.CardCollection.suit">
-<code class="sig-name descname">suit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#Cards.CardCollection.suit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="Cards.CardCollection.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#Cards.CardCollection.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -91,13 +81,13 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Initialize a Durak hand by drawing 6 cards from a given deck. The hand itself is 4 x N, N being number of values in input deck. The 0’th row always corresponds to the trump suit.</p>
 <dl class="py method">
-<dt id="Cards.DurakHand.deck_from_hand">
-<code class="sig-name descname">deck_from_hand</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#Cards.DurakDeck" title="Cards.DurakDeck">Cards.DurakDeck</a><a class="headerlink" href="#Cards.DurakHand.deck_from_hand" title="Permalink to this definition">¶</a></dt>
+<dt id="Cards.DurakHand.get_deck_from_hand">
+<code class="sig-name descname">get_deck_from_hand</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#Cards.DurakDeck" title="Cards.DurakDeck">Cards.DurakDeck</a><a class="headerlink" href="#Cards.DurakHand.get_deck_from_hand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Cards.DurakHand.hand_from_deck">
-<code class="sig-name descname">hand_from_deck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.DurakHand.hand_from_deck" title="Permalink to this definition">¶</a></dt>
+<dt id="Cards.DurakHand.get_hand_from_deck">
+<code class="sig-name descname">get_hand_from_deck</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Cards.DurakHand.get_hand_from_deck" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -196,7 +186,7 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 <h2>The <code class="docutils literal notranslate"><span class="pre">DurakField</span></code> class<a class="headerlink" href="#the-durakfield-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="Field.DurakField">
-<em class="property">class </em><code class="sig-prename descclassname">Field.</code><code class="sig-name descname">DurakField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deckplayers</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Field.</code><code class="sig-name descname">DurakField</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck</span></em>, <em class="sig-param"><span class="n">players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Field.DurakField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Field.Field</span></code></p>
 <p>This class defines legal moves you can make in a game of Durak, given every players’ hands and the current cards played on the field.</p>
 <dl class="py method">
