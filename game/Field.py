@@ -32,24 +32,25 @@ class DurakField(Field):
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
         self.drawing_deck = deck
-        self.n_players = len(players)
         self.players = players # list of Agent class objects
         self.trump_suit = self.drawing_deck[-1].suit
-        self.trump_suit_idx = deck.order[-1].suit_idx
         self.attack_order = []
 
         self.first_attack = True
         self.field_active = True
 
-        # field is a N x N array, where N = number of cards
-        # columns are attacks
-        # rows are defends
-        # the first row of attacks and defends is always the trump suit
-        # the first 13 rows and 13 columns of field also correspond to trump suit
-        self.field = np.zeros((deck.cards.size, deck.cards.size))
-        # self.field_buffer = np.zeros_like(self.field)
-        self.attacks = np.zeros_like(deck.cards)
-        self.attack_buffer = np.zeros_like(self.attacks)
+        # Field is a 6 x n_suit x n_val array.
+        # Field is divided into 2 buffer layers, and one active layer.
+        # The 2 buffer layers correspond to attack and defend cards that have been paired on the table.
+        # The active layer corresponds to any attack card that is awaiting a defense pair.
+        # The final layer is a bunch of ones multiplied by the player id that is executing a move.
+
+        self.field = np.zeros((6, self.n_suits, self.n_vals))
+        self.attack_buffer = self.field[0,:,:] 
+        self.defense_buffer = self.field[1,:,:]
+        self.attacks = self.field[2,:,:]
+        self.set_first_attack(self.first_attack)
+        self._set_number_cards()
 
     def __str__(self):
         """Output string for Field."""
@@ -60,21 +61,34 @@ class DurakField(Field):
         trump_str = 'Trump suit is ' + self.trump_suit + '\n'
         tail = '---------------------\n'
         return head + drawing_deck_str + ''.join(player_str_list) + trump_str + tail
+       
+    def set_first_attack(self, first_attack):
+        """Boolean layer that is all 1's if this is indeed the first attack, and all 0's
+        if not."""
+        self.first_attack = first_attack
+        self.field[3,:,:] = self.first_attack
 
-    def field_is_empty(self) -> bool:
-        """Returns whether the field is empty."""
-        return np.sum(self.field).astype('int') == 0
+    def _set_number_cards(self):
+        """Encode the number of cards left in the deck (from which we draw new cards -- hence drawing_deck.)
+        This will look like a bunch of 0's followed by a bunch of 1's -- sorting
+        allows us to get rid of all suit / value information."""
+        self.field[4,:,:] = np.sort(np.sort(self.drawing_deck.cards,axis=0),axis=1)
+ 
+    def set_active_player(self, player_id: int):
+        """Set active player of field by re-scaling the field's player layer.""" 
+        self.field[-1,:,:] = player_id * np.ones((self.n_suits, self.n_vals))
 
     def clear_field(self):
         """Clear field after a defender has successfully defended or given up. Make all that aren't finished in wait mode."""
-        self.field *= 0
-        self.attacks *= 0
         self.attack_buffer *= 0
+        self.defense_buffer *= 0
+        self.attacks *= 0
+        self.set_first_attack(True)
+        self._set_number_cards()
         for p in self.players:
             if p.is_finished() == False:
                 p.clear_buffer()
                 p.wait()
-        self.first_attack = True
         self.field_active = True
         self.attack_order = []
 
@@ -91,26 +105,29 @@ class DurakField(Field):
         player = self.players[player_id]
         if player.is_defend():
             # Assuming there are attacks in self.attacks
-            attack_idxs = np.flatnonzero(self.attacks) # use flatnonzero or argwhere
+            attack_idxs = np.flatnonzero(self.attacks)
 
             # Successful defense -- nobody attacks.
             if len(attack_idxs) == 0:
                 return [()]
-
+            
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
-            valid_defenses = np.zeros_like(self.field)
-            f = lambda x : (x // self.n_vals + 1)*self.n_vals# Compute the suit ceil -- ie, 13, 26, 39, 52 depending on x's suit
-            # All cards that are same suit, higher value than those of attacks.
+            valid_defenses = np.zeros((self.drawing_deck.cards.size, self.drawing_deck.cards.size))
+
+            f = lambda x : (x // self.n_vals + 1)*self.n_vals # Compute the suit ceil - ie, 13, 26, 39, 52 depending on x's suit.
+
+            # All cards that are the same suit, higher value than those of attacks.
             for att_idx in attack_idxs:
                 valid_defenses[att_idx + 1 : f(att_idx), att_idx] = 1
-            # All trump cards
-            for att_idx in nontrump_attack_idxs:
-                valid_defenses[:self.n_vals, att_idx] = 1
-
+                # All trump cards 
+                if att_idx in nontrump_attack_idxs:
+                    valid_defenses[:self.n_vals, att_idx] = 1
+            
             # All cards of same value as attacks.
             if self.first_attack:
                 valid_defenses[att_idx % self.n_vals : att_idx % self.n_vals + self.n_suits*self.n_vals : self.n_vals, att_idx] = 1
-            valid_defenses *= player.hand.ravel()[:,np.newaxis] # Mask with player's hand.
+
+            valid_defenses *= player.hand.ravel()[:,np.newaxis] # Mask by player's hand
             list_def_combinations = self.defense_combinations(valid_defenses)# Compute all possible defend moves.
             return list_def_combinations
 
@@ -119,17 +136,18 @@ class DurakField(Field):
             valid_attacks = np.zeros_like(self.attacks)
 
             if self.first_attack:
-                # For first attack, entire hand is valid.
-                valid_attacks = player.hand
-                # Cannot attack with more than what the defender has.
-                L = min(np.sum(valid_attacks), len(self.player_in_defense()))
-                # Note: if first attack, then not attacking is not an option.
-                return self.first_attack_combinations(valid_attacks, L)
+                valid_attacks = player.hand # For first attack, entire hand is valid.
+                L = min(np.sum(valid_attacks), len(self.player_in_defense())) # Cannot attack with more than what the defender has.
+                return self.first_attack_combinations(valid_attacks, L) # Note: if first attack, then not attacking is not an option.
 
             else:
-                # Add all values on the table to valid_attacks.
-                attack_idxs = np.append(np.argwhere(self.field)[:,1], np.argwhere(self.field)[:,0])
-                valid_attacks[:,attack_idxs % self.n_vals] = 1
+                # Add all card values from attack and defense buffers to valid_attacks.
+                buffer_idxs = indices_of_ones(self.attack_buffer + self.defense_buffer)
+                valid_attacks = np.zeros_like(self.attacks)
+
+                for idx in buffer_idxs:
+                    valid_attacks[:,idx[1]] = 1 # Must have same value as those in buffer.
+                
                 valid_attacks *= player.hand # Mask with player's hand.
                 # Cannot attack with more than what the defender has.
                 L = min(np.sum(valid_attacks), len(self.player_in_defense()))
@@ -145,7 +163,7 @@ class DurakField(Field):
         """The first attack can only be cards of the same value."""
         idxs = indices_of_ones(valid_attacks)
         def valid(c):
-            """Mini-function that only serves to create valid combinations."""
+            """The very first attack must be with cards of same value."""
             return min(np.array(c)[:,1]) == max(np.array(c)[:,1])
 
         first_att_combinations = []
@@ -159,11 +177,11 @@ class DurakField(Field):
         # Base case - there is no defense we can do.
         if len(idxs) == 0:
             return [_ACTION_GIVEUP]
-        
+
         attacks = np.unique(np.argwhere(valid_defenses)[:,1])
-        defends = np.unique(np.argwhere(valid_defenses)[:,0])
+        defenses = np.unique(np.argwhere(valid_defenses)[:,0])
         # Base case - can't use the same card to defend multiple attacks.
-        if len(attacks) > len(defends):
+        if len(attacks) > len(defenses):
             return [_ACTION_GIVEUP]
 
         # Base case - can't reduce the number of attacks
@@ -210,15 +228,15 @@ class DurakField(Field):
                     self.attack_buffer += self.attacks
                     self.attacks *= 0
             elif move == _ACTION_GIVEUP:
-                player.hand += self.attacks + self.attack_buffer + player.buffer
+                player.hand += self.attacks + self.attack_buffer + self.defense_buffer
                 self.field_active = False
             else: # The defense continues.
                 for m in move:
                     current_buffer[m[0] // self.n_vals, m[0] % self.n_vals] = 1
-                    self.field[m] = 1
                 player.hand -= current_buffer
                 player.buffer += current_buffer
                 self.attack_buffer += self.attacks
+                self.defense_buffer += current_buffer
                 self.attacks *= 0
 
         elif player.is_wait():

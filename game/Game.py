@@ -105,9 +105,9 @@ class DurakGame(Game):
         # Decide who gets to attack and defend.
         weakest_players = [(id, np.argmax(p.hand[0,:])) for id, p in enumerate(self.players)]
         shuffle(weakest_players)
-        attack_id = min(weakest_players, key=lambda x: x[1])[0]
-        self.players[attack_id].attack()
-        self.players[(attack_id + 1) % self.n_players].defend()
+        first_player_id = min(weakest_players, key=lambda x: x[1])[0]
+        self.players[first_player_id].attack()
+        self.players[(first_player_id + 1) % self.n_players].defend()
 
         # Initialize the Field
         self.playing_field = DurakField(deck, self.players)
@@ -160,10 +160,13 @@ class DurakGame(Game):
         initial_attack_ids = tuple([p.player_id for p in self.playing_field.players_in_attack()])
 
         player = self.players[player_id]
+        self.field.set_active_player(player_id)
         if player.is_attack() or player.is_defend():
             self.playing_field.execute_move(action, player_id)
         if player.is_wait() or player.is_finished():
-            return self.playing_field, self._next_player(player_id)
+            next_player_id = self._next_player(player_id) 
+            self.playing_field.set_active_player(next_player_id)
+            return self.playing_field, next_player_id
 
         # The playing field is only inactivated after a defending player successfully defends, or fails to defend. Thus the below case only happens if the current player is defending. This also means the next player id is new_attack_id.
         if self.playing_field.field_active == False:
@@ -205,6 +208,7 @@ class DurakGame(Game):
             self.playing_field.clear_field()
             self.players[new_attack_id].attack()
             self.players[new_defend_id].defend()
+            self.playing_field.set_active_player(new_attack_id)
             return self.playing_field, new_attack_id
         else:
             # Field is still active. If player was defending, then it's another player's turn to attack, unless player passed along the attack. If player was attacking, then it's the defender's turn to defend.
@@ -215,7 +219,7 @@ class DurakGame(Game):
                     attack_passed = False
 
                     # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. All pass does is move defend position. Note -- we do not need to ensure field wasn't empty, because field is active AND it was the first attack.
-                    if np.sum(np.abs((np.argwhere(self.playing_field.field)[:,0] - np.argwhere(self.playing_field.field)[:,1]) % self.playing_field.n_vals)) == 0: # if pass is true
+                    if len(np.unique(np.argwhere(self.playing_field.attack_buffer + self.playing_field.defense_buffer)[:,1])) == 1: # if pass is true
                         if player.is_finished() == False:
                             player.attack() # Then player is now attacking or finished.
                             self.playing_field.attacks += player.buffer + self.playing_field.attack_buffer
@@ -235,9 +239,10 @@ class DurakGame(Game):
                                 p.attack()
 
                         # No longer in first attack.
-                        self.playing_field.first_attack = attack_passed
+                        self.playing_field.set_first_attack(attack_passed)
 
                         # New defender is next player to move.
+                        self.playing_field.set_active_player(new_defend_id)
                         return self.playing_field, new_defend_id
 
                     # The attack is not passed onto the next player.
@@ -252,15 +257,18 @@ class DurakGame(Game):
                         new_attack_id = choice(attack_ids)
 
                         # No longer in first attack.
-                        self.playing_field.first_attack = False
+                        self.playing_field.set_first_attack(False)
 
                         # An attack is next.
+                        self.playing_field.set_active_player(new_attack_id)
                         return self.playing_field, new_attack_id
 
                 # If it is not the first attack, then we choose the next attacking player randomly.
                 else:
                     # Here we don't need to enable anyone that is waiting to attack, since it's no longer the first attack.
-                    return self.playing_field, choice(initial_attack_ids)
+                    random_player_id = choice(initial_attack_ids)
+                    self.playing_field.set_active_player(random_player_id)
+                    return self.playing_field, random_player_id
 
             # If player was attacking, then next player has to be the defender.
             if player.is_attack():
@@ -277,6 +285,7 @@ class DurakGame(Game):
                 # Chose to attack:
                 else:
                     next_player_id = initial_defend_id
+                self.playing_field.set_active_player(next_player_id)
                 return self.playing_field, next_player_id
         if player.is_wait():
             raise ValueError('Attempted an action with waiting player.')
