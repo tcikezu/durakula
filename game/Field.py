@@ -1,5 +1,4 @@
 from utils import *
-import copy
 from math import ceil
 
 class Field:
