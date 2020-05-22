@@ -2,7 +2,6 @@ import numpy as np
 from collections import deque
 import random
 import copy
-import pdb
 
 _CARD_MAP_FULL = np.array([['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12'],
                    ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11'  , 'C12'],
@@ -59,8 +58,6 @@ class CardCollection():
     def __setitem__(self, idx: int, value: Card): 
         """Set the idx'th card of the deck."""
         self.order[idx] = value
-        #elif idx == len(self.order): 
-        #    self.order.append(value)
 
     def __add__(self, other):
         self.cards += other.cards

@@ -1,4 +1,5 @@
 from utils import *
+import copy
 from math import ceil
 
 class Field:
@@ -50,7 +51,6 @@ class DurakField(Field):
         # self.field_buffer = np.zeros_like(self.field)
         self.attacks = np.zeros_like(deck.cards)
         self.attack_buffer = np.zeros_like(self.attacks)
-
 
     def __str__(self):
         """Output string for Field."""
