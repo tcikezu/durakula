@@ -23,11 +23,11 @@ class Card():
         return self.card
 
     def __str__(self):
-        return self.suit + ' of ' + self.value
+        return self.value + ' of ' + self.suit
 
 class CardCollection():
     """First In Last Out collection of Card objects, implemented with collection.deque storing deck order, and np.ndarray representing cards inside the deck."""
-    def __init__(self, n_suits: int, n_vals: int, fill=True):
+    def __init__(self, n_suits: int = 4, n_vals: int = 13, fill=True):
         assert(0 < n_suits <=4 and 0 < n_vals <= 13), 'Deck dimensions out of bounds'
         if fill == True:
             self.order = deque([Card(s,v) for s in range(n_suits) for v in range(n_vals)])
@@ -61,9 +61,12 @@ class CardCollection():
 
     def __add__(self, other):
         self.cards += other.cards
-        self.order = other.deck + self.order
+        self.order = other.order + self.order
         other.empty()
         return self
+
+    def __eq__(self, other):
+        return self.cards.all() == other.cards.all() and self.order == other.order
 
     def empty(self):
         """Empty this deck."""
@@ -76,10 +79,10 @@ class CardCollection():
     def draw_card(self, n=1):
         # drawn_cards = CardCollection(n_suits = self.n_suits, n_vals = self.n_vals, fill=False)
         drawn_cards = copy.deepcopy(self)
-        drawn_cards.empty()
         if self.__len__() == 0:
             return drawn_cards
-        for i in range(n):
+        drawn_cards.empty()
+        for i in range(min(n,len(self.order))):
             card = self.order.popleft()
             self.cards[card.suit_idx, card.value_idx] = 0
             drawn_cards.cards[card.suit_idx, card.value_idx] = 1
@@ -117,23 +120,31 @@ class DurakDeck(CardCollection):
 class DurakHand():
     """Initialize a Durak hand by drawing 6 cards from a given deck. The hand itself is 4 x N, N being number of values in input deck. The 0'th row always corresponds to the trump suit."""
     def __init__(self, deck: DurakDeck):
+        if len(deck) > 0:
+            self.trump_idx = deck[-1].suit_idx
+            self.trump_suit = deck[-1].suit
+        else:
+            self.trump_idx = 0
+            self.trump_suit = 0
+            raise ValueError("Attempted to create hand from an empty deck")
         my_deck = deck.draw_card(6)
         self.hand = np.zeros_like(my_deck.cards).astype(int)
-        self.trump_idx = deck[-1].suit_idx
-        self.trump_suit = deck[-1].suit
         self.get_hand_from_deck(my_deck)
         self.mode = my_deck.mode
 
     def get_hand_from_deck(self, deck):
-        indices = list(range(deck.n_suits))
-        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        self.hand += deck.cards[indices]
-        return self.hand
+        if len(deck) > 0:
+            indices = list(range(deck.n_suits))
+            indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
+            self.hand += deck.cards[indices]
 
     def get_deck_from_hand(self) -> DurakDeck:
-        indices = list(range(self.hand.shape[0]))
-        indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
-        deck = DurakDeck(cards = self.hand[indices], mode = self.mode)
+        if np.sum(self.hand > 0):
+            indices = list(range(self.hand.shape[0]))
+            indices[0], indices[self.trump_idx] = indices[self.trump_idx], indices[0]
+            deck = DurakDeck(cards = self.hand[indices], mode = self.mode)
+        else:
+            deck = DurakDeck(mode=self.mode, fill=False)
         return deck
 
     # def __getitem__(self, key):
