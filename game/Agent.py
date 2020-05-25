@@ -44,7 +44,7 @@ def RandomMultiPlayer(MultiPlayer):
             a = np.random.randint(self.game.get_action_size())
         return a
 
-def HumanMultiPlayer(MultiPlayer):
+def HumanDurakPlayer(MultiPlayer):
     def __init__(self, game):
         super().__init__(game)
 
