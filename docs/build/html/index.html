@@ -102,7 +102,7 @@
 <dl class="py class">
 <dt id="Game.DurakGame">
 <em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakGame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deck_mode</span></em>, <em class="sig-param"><span class="n">n_players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Game.Game</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Game.MultiPlayerGame</span></code></p>
 <p>State machine for game of Durak, a card game for 2-5 players.</p>
 <dl class="py method">
 <dt id="Game.DurakGame.get_action_size">
@@ -180,91 +180,91 @@ player (int): The id of the next player who plays in the next turn.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="the-durakplayers-class">
-<h2>The <code class="docutils literal notranslate"><span class="pre">DurakPlayers</span></code> class<a class="headerlink" href="#the-durakplayers-class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-durakplayerstates-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">DurakPlayerStates</span></code> class<a class="headerlink" href="#the-durakplayerstates-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="Game.DurakPlayers">
-<em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakPlayers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suits</span></em>, <em class="sig-param"><span class="n">n_vals</span></em>, <em class="sig-param"><span class="n">n_players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates">
+<em class="property">class </em><code class="sig-prename descclassname">Game.</code><code class="sig-name descname">DurakPlayerStates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_suits</span></em>, <em class="sig-param"><span class="n">n_vals</span></em>, <em class="sig-param"><span class="n">n_players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Wrapper class for managing the players in a game of Durak.</p>
 <dl class="py method">
-<dt id="Game.DurakPlayers.attack">
-<code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.attack" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.attack">
+<code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.attack" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.clear_buffer">
-<code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.clear_buffer" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.clear_buffer">
+<code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.clear_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all cards from the buffer hand.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.defend">
-<code class="sig-name descname">defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.defend" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.defend">
+<code class="sig-name descname">defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.defend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.finished">
-<code class="sig-name descname">finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.finished" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.finished">
+<code class="sig-name descname">finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.get_attackers">
-<code class="sig-name descname">get_attackers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_attackers" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.get_attackers">
+<code class="sig-name descname">get_attackers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.get_attackers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of players that are attacking.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.get_defender">
-<code class="sig-name descname">get_defender</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_defender" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.get_defender">
+<code class="sig-name descname">get_defender</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.get_defender" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the player that is currently in defense mode.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.get_len">
-<code class="sig-name descname">get_len</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_len" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.get_len">
+<code class="sig-name descname">get_len</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.get_len" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.get_str">
-<code class="sig-name descname">get_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trump_idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_str" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.get_str">
+<code class="sig-name descname">get_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trump_idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.get_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Note - player numbering begins from 1, but the actual indices still begin from 0.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.hand_is_empty">
-<code class="sig-name descname">hand_is_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.hand_is_empty" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.hand_is_empty">
+<code class="sig-name descname">hand_is_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayerStates.hand_is_empty" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.is_attack">
-<code class="sig-name descname">is_attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_attack" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.is_attack">
+<code class="sig-name descname">is_attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayerStates.is_attack" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.is_defend">
-<code class="sig-name descname">is_defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_defend" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.is_defend">
+<code class="sig-name descname">is_defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayerStates.is_defend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.is_finished">
-<code class="sig-name descname">is_finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_finished" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.is_finished">
+<code class="sig-name descname">is_finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayerStates.is_finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.is_wait">
-<code class="sig-name descname">is_wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_wait" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.is_wait">
+<code class="sig-name descname">is_wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayerStates.is_wait" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.set_current_player">
-<code class="sig-name descname">set_current_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.set_current_player" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.set_current_player">
+<code class="sig-name descname">set_current_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.set_current_player" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the active player id.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakPlayers.wait">
-<code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.wait" title="Permalink to this definition">¶</a></dt>
+<dt id="Game.DurakPlayerStates.wait">
+<code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayerStates.wait" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

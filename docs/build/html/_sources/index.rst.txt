@@ -14,9 +14,9 @@ The ``DurakGame`` class
     :undoc-members:
     :show-inheritance:
 
-The ``DurakPlayers`` class
+The ``DurakPlayerStates`` class
 ************************************
-.. autoclass:: Game.DurakPlayers
+.. autoclass:: Game.DurakPlayerStates
     :members:
     :undoc-members:
     :show-inheritance:
