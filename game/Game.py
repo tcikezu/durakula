@@ -1,4 +1,4 @@
-from collections import deque, defaultdict
+from collections import deque
 import numpy as np
 from random import choice, shuffle
 from Field import DurakField, _ACTION_GIVEUP
@@ -18,15 +18,6 @@ class Game:
             init_field: a representation of the field (ideally this is the form that will be the input to your neural network)
         """
         pass
-
-    # def getFieldSize(self):
-    #     """
-    #     Returns:
-    #         Originally returns (x,y): a tuple of dimensions
-    #         Now: returns number of cards on the field?
-    #         Or maybe we can return number of `active' cards
-    #     """
-    #     pass
 
     def get_action_size(self):
         """
@@ -76,22 +67,23 @@ class Game:
         pass
 
 class MultiPlayerGame(Game):
-    """Base class for multi-agent play."""
+    """Base class for multi-player games. With multiple agents, we just need one additional
+    method to Game, which is get_current_player. This is required by some games where who
+    gets to play is sometimes decided after some pre-game action. For example, in Durak the
+    player with the weakest trump card goes first. Or in Big2, the player with the 3 of
+    diamonds goes first. As these are game-specific decisions, we need the method here,
+    as opposed to pit.py or the Arena class."""
     def __init__(self):
         super().__init__()
-        self.player = defaultdict()
 
-    def new_player(self, player):
-        pass
-
-    def get_player(self, player):
+    def get_current_player(self):
         pass
 
 _FINISHED = -2
 _WAIT = -1
 _ATTACK = 0
 _DEFEND = 1
-class DurakPlayers():
+class DurakPlayerStates():
     """Wrapper class for managing the players in a game of Durak."""
     def __init__(self, n_suits, n_vals, n_players):
         self.player_states = np.zeros((3*n_players + 1, n_suits, n_vals))
@@ -186,14 +178,12 @@ class DurakPlayers():
         """Returns a list of players that are attacking."""
         return [p for p in range(self.n_players) if self.is_attack(p)]
 
-class DurakGame(Game):
+class DurakGame(MultiPlayerGame):
     """State machine for game of Durak, a card game for 2-5 players."""
     def __init__(self, deck_mode, n_players) -> None:
         deck = DurakDeck(mode = deck_mode)
-        self.players = DurakPlayers(deck.n_suits, deck.n_vals, n_players)
-
+        self.players = DurakPlayerStates(deck.n_suits, deck.n_vals, n_players)
         self.n_players = n_players
-
         self.init_field = None
         self._begin_game(deck)
 
@@ -287,7 +277,6 @@ class DurakGame(Game):
 
         # The playing field inactivates only after a successful or unsuccessful defense.
         if field.is_active == False:
-
             if len(action) == 0: # A successful defense happened.
                 if self.players.is_finished():
                     new_defender = self._next_player(player)
@@ -322,7 +311,7 @@ class DurakGame(Game):
             self.players.defend(new_defender)
             self.players.set_current_player(new_attacker)
             return field, new_attacker
-        else: # Field is still active. 
+        else: # Field is still active.
             if self.players.is_defend():
                 if field.first_attack: # Attack passing only happens on first attack.
                     # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. Note -- we do not need to ensure field wasn't empty, because field is active AND it was the first attack.
@@ -351,7 +340,7 @@ class DurakGame(Game):
 
                         # As this is the first attack, we can choose amongst attack ids that weren't from the original attack.
                         attackers = [p for p in range(self.n_players) if self.players.is_attack(p) and p != initial_attackers[0]]
-                        # However if this is none, then just add the original attacker. 
+                        # However if this is none, then just add the original attacker.
                         if attackers is None:
                             attackers = initial_attackers
                         new_attacker = choice(attackers)
