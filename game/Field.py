@@ -61,10 +61,10 @@ class DurakField(Field):
 
         head = '--- Playing Field ---\n'
         drawing_deck_str = 'Drawing DurakDeck: ' + str(self.drawing_deck) + '\n'
-        player_str = [str(self.players)]
+        player_str = str(self.players)
         trump_str = 'Trump suit is ' + self.trump_suit + '\n'
         tail = '---------------------\n'
-        return head + drawing_deck_str + ''.join(player_str_list) + trump_str + tail
+        return head + drawing_deck_str + player_str + trump_str + tail
 
     def set_first_attack(self, first_attack):
         """Boolean layer that is all 1's if this is indeed the first attack, and all 0's
@@ -119,7 +119,7 @@ class DurakField(Field):
                 valid_defenses[att_idx % self.n_vals : att_idx % self.n_vals + self.n_suits*self.n_vals : self.n_vals, att_idx] = 1
 
             valid_defenses *= self.players.hands[player].ravel()[:,np.newaxis] # Mask by player's hand
-            list_def_combinations = self.defense_combinations(valid_defenses)# Compute all possible defend moves.
+            list_def_combinations = self._defense_combinations(valid_defenses)# Compute all possible defend moves.
             return list_def_combinations
 
         elif self.players.is_attack(player):
@@ -130,7 +130,7 @@ class DurakField(Field):
             if self.first_attack:
                 valid_attacks = self.players.hands[player] # For first attack, entire hand is valid.
                 L = min(np.sum(valid_attacks), self.players.get_len(defender)) # Cannot attack with more than what the defender has.
-                return self.first_attack_combinations(valid_attacks, L) # Note: if first attack, then not attacking is not an option.
+                return self._first_attack_combinations(valid_attacks, L) # Note: if first attack, then not attacking is not an option.
             else:
                 # Add all card values from attack and defense buffers to valid_attacks.
                 buffer_idxs = indices_of_ones(self.attack_buffer + self.defense_buffer)
@@ -150,7 +150,7 @@ class DurakField(Field):
         else:
             raise ValueError('INVALID PLAYER MODE')
 
-    def first_attack_combinations(self, valid_attacks: np.ndarray, L: int) -> list:
+    def _first_attack_combinations(self, valid_attacks: np.ndarray, L: int) -> list:
         """The first attack can only be cards of the same value."""
         idxs = indices_of_ones(valid_attacks)
         def valid(c):
@@ -162,7 +162,7 @@ class DurakField(Field):
             first_att_combinations += [c for c in combinations(idxs, r) if valid(c)]
         return first_att_combinations
 
-    def defense_combinations(self, valid_defenses: np.ndarray) -> list:
+    def _defense_combinations(self, valid_defenses: np.ndarray) -> list:
         """Returns every possible defense given valid_defenses."""
         idxs = indices_of_ones(valid_defenses)
         # Base case - there is no defense we can do.
@@ -233,7 +233,7 @@ class DurakField(Field):
         elif self.players.is_finished(player):
             pass
 
-        # Note - even if there are cards remaining, an empty hand at end of round means you've finished play.
+        # Note - even if there are cards in drawing_deck remaining, an empty hand at end of round means you've finished play.
         if self.players.hand_is_empty(player):
             if self.players.is_defend(player):
                 self.is_active = False

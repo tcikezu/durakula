@@ -68,7 +68,7 @@ class DurakArena(Arena):
         current_player = self.game.get_current_player()
         field = self.game.get_init_field()
         it = 0
-        while self.game.get_game_ended(field, current_player) == 0:
+        while self.game.get_game_ended() == 0:
             it += 1
             if verbose:
                 assert self.display
