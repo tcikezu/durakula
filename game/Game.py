@@ -279,7 +279,7 @@ class DurakGame(Game):
             unique_attack_order = [field.attack_order[i] for i in sorted(attackers)]
 
             # Draw from deck, first by order of attack, and lastly by defend.
-            deck = field.drawing_deck
+            deck = field.deck
             for p in unique_attack_order + [initial_defender]:
 
                 # Draw either enough cards to have 6 cards, or no cards.
