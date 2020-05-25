@@ -2,7 +2,7 @@ from collections import deque, defaultdict
 import numpy as np
 from random import choice, shuffle
 from Field import DurakField, _ACTION_GIVEUP
-from Cards import DurakDeck 
+from Cards import DurakDeck
 
 class Game:
     """
@@ -223,17 +223,17 @@ class DurakGame(Game):
             if self.players.is_finished(p) == False:
                 return p
 
-    def get_next_state(self, field, player, action):
-        """Updates the state of the playing field (`Field.DurakField`) after player (`Agent.DurakPlayer`) performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (`Cards.DurakDeck`) is unempty.
+    def get_next_state(self, field: DurakField, player: int, action):
+        """Updates the state of the playing field (`Field.DurakField`) after the player performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (`Cards.DurakDeck`) is unempty.
 
         Args:
             field (DurakField) : Current state of the field.
-            action (tuple) or (str): Action player will take.
             player (int): Index of player
+            action (tuple) or (str): Action player will take.
 
         Returns:
-            new_field (Field.DurakField): The field after applying action.
-            next_player (int): The id of player who plays in the next turn.
+            field (DurakField): The field after applying action.
+            player (int): The id of the next player who plays in the next turn.
         """
 
         # Immutable containers for defend and attack player ids.

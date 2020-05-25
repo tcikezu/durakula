@@ -29,7 +29,7 @@ _ACTION_GIVEUP = 'ACTION_GIVEUP'
 class DurakField(Field):
     """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
     # Might be useful to convert this into **kwargs
-    def __init__(self, deck, players, first_player_id):
+    def __init__(self, deck, players, first_player):
         """Inits DurakField with deck and players."""
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
@@ -85,16 +85,16 @@ class DurakField(Field):
         self.attacks *= 0
         self.set_first_attack(True)
         self._set_number_cards()
-        for player_id in range(self.players.n_players):
-            if self.players.is_finished(player_id) == False:
-                self.players.clear_buffer(player_id)
-                self.players.wait(player_id)
+        for player in range(self.players.n_players):
+            if self.players.is_finished(player) == False:
+                self.players.clear_buffer(player)
+                self.players.wait(player)
         self.is_active = True
         self.attack_order = []
 
-    def get_legal_moves(self, player_id) -> list:
+    def get_legal_moves(self, player) -> list:
         """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed. A player in defense can always give up. If first attack, then attack must be performed."""
-        if self.players.is_defend(player_id):
+        if self.players.is_defend(player):
             # Assuming there are attacks in self.attacks
             attack_idxs = np.flatnonzero(self.attacks)
 
@@ -118,18 +118,18 @@ class DurakField(Field):
             if self.first_attack:
                 valid_defenses[att_idx % self.n_vals : att_idx % self.n_vals + self.n_suits*self.n_vals : self.n_vals, att_idx] = 1
 
-            valid_defenses *= self.players.hands[player_id].ravel()[:,np.newaxis] # Mask by player's hand
+            valid_defenses *= self.players.hands[player].ravel()[:,np.newaxis] # Mask by player's hand
             list_def_combinations = self.defense_combinations(valid_defenses)# Compute all possible defend moves.
             return list_def_combinations
 
-        elif self.players.is_attack(player_id):
+        elif self.players.is_attack(player):
             # Attacks with respect to cards on self.field.
             valid_attacks = np.zeros_like(self.attacks)
-            defense_id = self.players.player_in_defense()
+            defender = self.players.player_in_defense()
 
             if self.first_attack:
-                valid_attacks = self.players.hands[player_id] # For first attack, entire hand is valid.
-                L = min(np.sum(valid_attacks), self.players.get_len(defense_id)) # Cannot attack with more than what the defender has.
+                valid_attacks = self.players.hands[player] # For first attack, entire hand is valid.
+                L = min(np.sum(valid_attacks), self.players.get_len(defender)) # Cannot attack with more than what the defender has.
                 return self.first_attack_combinations(valid_attacks, L) # Note: if first attack, then not attacking is not an option.
             else:
                 # Add all card values from attack and defense buffers to valid_attacks.
@@ -139,13 +139,13 @@ class DurakField(Field):
                 for idx in buffer_idxs:
                     valid_attacks[:,idx[1]] = 1 # Must have same value as those in buffer.
 
-                valid_attacks *= self.players.hands[player_id]# Mask with player's hand.
+                valid_attacks *= self.players.hands[player]# Mask with player's hand.
                 # Cannot attack with more than what the defender has.
-                L = min(np.sum(valid_attacks), self.players.get_len(defense_id))
+                L = min(np.sum(valid_attacks), self.players.get_len(defender))
                 # Note - if not first attack, then one can choose to not attack. Valid attacks are any number of cards whose value matches that on the table.
                 return list_nonzero_combinations(valid_attacks, L) + [()]
 
-        elif self.players.is_wait(player_id) or self.players.is_finished(player_id):
+        elif self.players.is_wait(player) or self.players.is_finished(player):
             return []
         else:
             raise ValueError('INVALID PLAYER MODE')
@@ -188,25 +188,25 @@ class DurakField(Field):
         def_combinations += [c for c in combinations(idxs, r) if valid(c)]
         return def_combinations
 
-    def has_legal_moves(self, player_id: int) -> bool:
+    def has_legal_moves(self, player: int) -> bool:
         """A player has legal moves so long as their hand isn't empty."""
-        return self.players.hand_is_empty(player_id)
+        return self.players.hand_is_empty(player)
 
-    def execute_move(self, move, player_id: int) -> None:
+    def execute_move(self, move, player: int) -> None:
         """Execute a move for the given player. Evaluates whether the player has finished their game (ie run out of cards) at the end of move."""
-        if self.players.is_attack(player_id):
-            current_buffer = np.zeros_like(self.players.buffers[player_id])
+        if self.players.is_attack(player):
+            current_buffer = np.zeros_like(self.players.buffers[player])
             if len(move) == 0: # Wait.
                 pass
             else:
-                self.attack_order.append(player_id)
+                self.attack_order.append(player)
                 for m in move:
                     current_buffer[m] = 1
-                self.players.buffers[player_id] += current_buffer
+                self.players.buffers[player] += current_buffer
                 self.attacks += current_buffer
-                self.players.hands[player_id] -= current_buffer
-        elif self.players.is_defend(player_id):
-            current_buffer = np.zeros_like(self.players.buffers[player_id])
+                self.players.hands[player] -= current_buffer
+        elif self.players.is_defend(player):
+            current_buffer = np.zeros_like(self.players.buffers[player])
             if len(move) == 0: # Nothing to defend.
                 # A successful defense occured.
                 if len(self.players.players_in_attack()) == 0:
@@ -217,27 +217,27 @@ class DurakField(Field):
                     self.attack_buffer += self.attacks
                     self.attacks *= 0
             elif move == _ACTION_GIVEUP:
-                self.players.hands[player_id] += self.attacks + self.attack_buffer + self.defense_buffer
+                self.players.hands[player] += self.attacks + self.attack_buffer + self.defense_buffer
                 self.is_active = False
             else: # The defense continues.
                 for m in move:
                     current_buffer[m[0] // self.n_vals, m[0] % self.n_vals] = 1
-                self.players.hands[player_id] -= current_buffer
-                self.players.buffers[player_id] += current_buffer
+                self.players.hands[player] -= current_buffer
+                self.players.buffers[player] += current_buffer
                 self.attack_buffer += self.attacks
                 self.defense_buffer += current_buffer
                 self.attacks *= 0
 
-        elif self.players.is_wait(player_id):
+        elif self.players.is_wait(player):
             pass
-        elif self.players.is_finished(player_id):
+        elif self.players.is_finished(player):
             pass
 
         # Note - even if there are cards remaining, an empty hand at end of round means you've finished play.
-        if self.players.hand_is_empty(player_id):
-            if self.players.is_defend(player_id):
+        if self.players.hand_is_empty(player):
+            if self.players.is_defend(player):
                 self.is_active = False
-            self.players.finished(player_id)
+            self.players.finished(player)
 
     @staticmethod
     def _increment_move(move):
