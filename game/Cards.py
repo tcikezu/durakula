@@ -120,7 +120,6 @@ class DurakDeck(CardCollection):
 
     @classmethod
     def convert_hand_to_deck(cls, hand: np.ndarray, trump_idx: int):
-        """Requires an existing DurakDeck to match the deck's mode."""
         indices = list(range(hand.shape[0]))
         indices[0], indices[trump_idx] = indices[trump_idx], indices[0]
         if hand.shape == (4,9):
