@@ -33,23 +33,24 @@ class Arena:
         """
         pass
 
-class DurakArena(Arena):
+class MultiArena(Arena):
     """
     An Arena class that manages player actions taking place in a given game.
     Originally designed for card games where players have to be given cards
-    at the start of the game.
+    at the start of the game, and the last player remaining loses the game.
+    (Applicable to durak, big 2, bs, etc.). We let the game handle who plays
+    when.
     """
 
     def __init__(self, game, *players, display=None):
         """
         Input:
-            Players: A list of player functions, each of which takes board
-            as input, and returns an action.
+            Players: A list of player functions, which computes an action given the field.
             game: Game object
             display: a function that takes Board as input and prints it out.
         """
 
-        self.player_functions = [(i,p) for i,p in enumerate(players)]
+        self.player_functions = [p for p in players]
         self.n_players = len(self.player_functions)
         self.game = game
         self.display = display
@@ -72,9 +73,9 @@ class DurakArena(Arena):
             it += 1
             if verbose:
                 assert self.display
-                print("turn ", str(it), "Player ", str(current_player))
+                print("turn ", str(it), "Player ", current_player)
                 self.display(field)
-            action = self.player_functions[current_player][1](field, current_player)
+            action = self.player_functions[current_player](field)
             valids = self.game.get_valid_moves(field, current_player)
 
             if valids[action] == 0:
