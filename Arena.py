@@ -49,7 +49,7 @@ class DurakArena(Arena):
             display: a function that takes Board as input and prints it out.
         """
 
-        self.player_functions = [player for player in players]
+        self.player_functions = [(i,p) for i,p in enumerate(players)]
         self.n_players = len(self.player_functions)
         self.game = game
         self.display = display
@@ -74,7 +74,7 @@ class DurakArena(Arena):
                 assert self.display
                 print("turn ", str(it), "Player ", str(current_player))
                 self.display(field)
-            action = self.player_functions[current_player](field, current_player)
+            action = self.player_functions[current_player][1](field, current_player)
             valids = self.game.get_valid_moves(field, current_player)
 
             if valids[action] == 0:
@@ -106,7 +106,6 @@ class DurakArena(Arena):
         # write two for loops here that correspond to num / self.N plays of a
         # game, iterating over player start. 
 
-        num = int(num / self.n_players)
         n_lost = np.zeros(self.n_players)
        
         for _ in tqdm(range(num), desc=f'Arena.playGames'):

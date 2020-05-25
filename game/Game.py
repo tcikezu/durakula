@@ -79,12 +79,12 @@ class MultiPlayerGame(Game):
     """Base class for multi-agent play."""
     def __init__(self):
         super().__init__()
-        self.player_id = defaultdict()
+        self.player = defaultdict()
 
     def new_player(self, player):
         pass
 
-    def get_player_id(self, player):
+    def get_player(self, player):
         pass
 
 _FINISHED = -2
@@ -105,56 +105,56 @@ class DurakPlayers():
         player_strs = [str(i+1) + ':' + str(DurakDeck.convert_hand_to_deck(hand, trump_idx)) for hand in self.hands]
         return '\n'.join(player_strs)
 
-    def get_len(self, player_id):
-        return np.sum(self.hands[player_id])
+    def get_len(self, player):
+        return np.sum(self.hands[player])
 
-    def clear_buffer(self, player_id):
+    def clear_buffer(self, player):
         """Remove all cards from the buffer hand."""
-        self.buffers[player_id] *= 0
+        self.buffers[player] *= 0
 
-    def wait(self, player_id):
-        self.modes[player_id] *= 0
-        self.modes[player_id] += _WAIT
+    def wait(self, player):
+        self.modes[player] *= 0
+        self.modes[player] += _WAIT
 
-    def attack(self, player_id):
-        self.modes[player_id] *= 0
-        self.modes[player_id] += _ATTACK
+    def attack(self, player):
+        self.modes[player] *= 0
+        self.modes[player] += _ATTACK
 
-    def defend(self, player_id):
-        self.modes[player_id] *= 0
-        self.modes[player_id] += _DEFEND
+    def defend(self, player):
+        self.modes[player] *= 0
+        self.modes[player] += _DEFEND
 
-    def finished(self, player_id):
-        self.modes[player_id] *= 0
-        self.modes[player_id] += _FINISHED
+    def finished(self, player):
+        self.modes[player] *= 0
+        self.modes[player] += _FINISHED
 
-    def is_wait(self, player_id) -> bool:
-        return self.modes[player_id].any() == _WAIT
+    def is_wait(self, player) -> bool:
+        return self.modes[player].any() == _WAIT
 
-    def is_attack(self, player_id) -> bool:
-        return self.modes[player_id].any() == _ATTACK
+    def is_attack(self, player) -> bool:
+        return self.modes[player].any() == _ATTACK
 
-    def is_defend(self, player_id) -> bool:
-        return self.modes[player_id].any() == _DEFEND
+    def is_defend(self, player) -> bool:
+        return self.modes[player].any() == _DEFEND
 
-    def is_finished(self, player_id) -> bool:
-        return self.modes[player_id].any() == _FINISHED
+    def is_finished(self, player) -> bool:
+        return self.modes[player].any() == _FINISHED
 
-    def hand_is_empty(self, player_id) -> bool:
-        return np.sum(self.hands[player_id]) == 0
+    def hand_is_empty(self, player) -> bool:
+        return np.sum(self.hands[player]) == 0
 
-    def set_current_player(self, player_id):
+    def set_current_player(self, player):
         """Set the active player id."""
         self.player_states[-1] *= 0
-        self.player_states[-1] += player_id
+        self.player_states[-1] += player
 
     def player_in_defense(self):
         """Returns the player id that is currently in defense mode."""
-        return [p_id for p_id in range(self.n_players) if self.is_defend(p_id)][0]
+        return [p for p in range(self.n_players) if self.is_defend(p)][0]
 
     def players_in_attack(self):
         """Returns a list of player ids that are attacking."""
-        return [p_id for p_id in range(self.n_players) if self.is_attack(p_id)]
+        return [p for p in range(self.n_players) if self.is_attack(p)]
 
 class DurakGame(Game):
     """State machine for game of Durak, a card game for 2-5 players."""
@@ -162,23 +162,16 @@ class DurakGame(Game):
         self.deck = DurakDeck(mode = deck_mode)
         self.players = DurakPlayers(deck.n_suits, deck.n_vals, n_players)
 
-        self.player_id = defaultdict()
         self.n_players = n_players
 
         self.init_field = None
         self._begin_game()
 
-    def new_player(self, player):
-        self.player_id[player] = len(self.player_id)
-
-    def get_player_id(self, player):
-        return self.player_id[player]
-
     def get_current_player(self):
         return self.players.current_player
 
     def _begin_game(self):
-        """Assume all players are now assigned player_id via self.new_player. Deck is shuffled, then cut. 6 cards are dealt to each of the players. Finally the playing field (`Field`) is initialized."""
+        """Assume all players are now assigned player via self.new_player. Deck is shuffled, then cut. 6 cards are dealt to each of the players. Finally the playing field (`Field`) is initialized."""
         # Create a deck object.
 
         # Shuffle and cut the deck.
@@ -193,88 +186,88 @@ class DurakGame(Game):
         # Decide who gets to attack and defend.
         highest_trump_cards = [(id, np.max(np.argwhere(hand[0,:]))) for id, hand in self.hands]
         shuffle(highest_trump_cards)
-        first_player_id = min(highest_trump_cards, key=lambda x: x[1])[0]
+        first_player = min(highest_trump_cards, key=lambda x: x[1])[0]
 
-        self.players.attack(first_player_id)
-        self.players.defend((first_player_id + 1) % self.n_players)
+        self.players.attack(first_player)
+        self.players.defend((first_player + 1) % self.n_players)
 
         # Initialize the Field
-        self.init_field = DurakField(deck, self.players, first_player_id)
+        self.init_field = DurakField(deck, self.players, first_player)
 
     def get_init_field(self):
         """Initial Field"""
         return self.init_field
 
-    def get_action_size(self, field, player_id):
+    def get_action_size(self, field, player):
         """Available actions given player
 
         Args:
-            player_id (int): index for player
+            player (int): index for player
         """
-        return len(field.get_legal_moves(player_id))
+        return len(field.get_legal_moves(player))
 
-    def get_valid_moves(self, field, player_id):
-        return field.get_legal_moves(player_id)
+    def get_valid_moves(self, field, player):
+        return field.get_legal_moves(player)
 
-    def _next_player(self, player_id: int) -> int:
+    def _next_player(self, player: int) -> int:
         """By convention, the next valid player to the player's left."""
         for i in range(1, self.n_players):
-            p_id = (player_id + i) % self.n_players
-            if self.players.is_finished(p_id) == False:
-                return p_id
+            p = (player + i) % self.n_players
+            if self.players.is_finished(p) == False:
+                return p
 
-    def _previous_player(self, player_id: int) -> int:
+    def _previous_player(self, player: int) -> int:
         """By convention, the next valid player to the player's right."""
         for i in range(1, self.n_players):
-            p_id = (player_id - i) % self.n_players
-            if self.players.is_finished(p_id) == False:
-                return p_id
+            p = (player - i) % self.n_players
+            if self.players.is_finished(p) == False:
+                return p
 
-    def get_next_state(self, field, player_id, action):
+    def get_next_state(self, field, player, action):
         """Updates the state of the playing field (`Field.DurakField`) after player (`Agent.DurakPlayer`) performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (`Cards.DurakDeck`) is unempty.
 
         Args:
             field (DurakField) : Current state of the field.
             action (tuple) or (str): Action player will take.
-            player_id (int): Index of player
+            player (int): Index of player
 
         Returns:
             new_field (Field.DurakField): The field after applying action.
-            next_player_id (int): The id of player who plays in the next turn.
+            next_player (int): The id of player who plays in the next turn.
         """
 
         # Immutable containers for defend and attack player ids.
-        # Moving this before execute_move because it's possible that on first attack, the attacker runs out of cards, and initial_attack_ids is empty.
-        initial_defend_id = self.players.player_in_defense()
-        initial_attack_ids = tuple([p_id for p_id in self.players.players_in_attack()])
+        # Moving this before execute_move because it's possible that on first attack, the attacker runs out of cards, and initial_attackers is empty.
+        initial_defender = self.players.player_in_defense()
+        initial_attackers = tuple([p for p in self.players.players_in_attack()])
 
-        self.players.set_current_player(player_id)
-        if self.players.is_attack(player_id) or self.players.is_defend(player_id):
-            field.execute_move(action, player_id)
-        if self.players.is_wait(player_id) or self.players.is_finished(player_id):
-            next_player_id = self._next_player(player_id)
-            self.players.set_current_player(next_player_id)
-            return field, next_player_id
+        self.players.set_current_player(player)
+        if self.players.is_attack(player) or self.players.is_defend(player):
+            field.execute_move(action, player)
+        if self.players.is_wait(player) or self.players.is_finished(player):
+            next_player = self._next_player(player)
+            self.players.set_current_player(next_player)
+            return field, next_player
 
-        # The playing field is only inactivated after a defending player successfully defends, or fails to defend. Thus the below case only happens if the current self.players.is defending. This also means the next player id is new_attack_id.
+        # The playing field is only inactivated after a defending player successfully defends, or fails to defend. Thus the below case only happens if the current self.players.is defending. This also means the next player id is new_attacker.
         if field.is_active == False:
-            assert(self.players.is_defend(player_id)), f'Expected defend, instead got !{player.player_mode}'
+            assert(self.players.is_defend(player)), f'Expected defend, instead got !{player.player_mode}'
 
             # A successful defense happened.
             if len(action) == 0:
-                if self.players.is_finished(player_id):
-                    new_defend_id = self._next_player(player_id)
-                    new_attack_id = self._previous_player(next_player)
+                if self.players.is_finished(player):
+                    new_defender = self._next_player(player)
+                    new_attacker = self._previous_player(next_player)
                 else:
-                    new_attack_id = player_id
-                    new_defend_id = self._next_player(new_attack_id)
+                    new_attacker = player
+                    new_defender = self._next_player(new_attacker)
 
             # Defense was unsuccessful.
             elif action == _ACTION_GIVEUP:
-                new_attack_id = self._next_player(player_id)
-                new_defend_id = self._next_player(new_attack_id)
+                new_attacker = self._next_player(player)
+                new_defender = self._next_player(new_attacker)
 
-            assert(new_attack_id != new_defend_id), "Attack and Defend are same player!"
+            assert(new_attacker != new_defender), "Attack and Defend are same player!"
 
             # Retrieve indices of those who attacked
             attack_indices = np.unique(field.attack_order, return_index = True)[1]
@@ -284,23 +277,23 @@ class DurakGame(Game):
 
             # Draw from deck, first by order of attack, and lastly by defend.
             deck = field.drawing_deck
-            for p_id in unique_attack_order + [initial_defend_id]:
+            for p in unique_attack_order + [initial_defender]:
 
                 # Draw either enough cards to have 6 cards, or no cards.
-                if self.players.is_finished(p_id) == False:
+                if self.players.is_finished(p) == False:
                     if len(deck) > 0:
-                        self.players.hands[p_id] += DurakDeck.draw_hand_from_deck(deck.draw(max(6 - self.players.get_len(p_id),0)))
+                        self.players.hands[p] += DurakDeck.draw_hand_from_deck(deck.draw(max(6 - self.players.get_len(p),0)))
                 # Is it possible for there to not be enough cards in the deck? Ie is it possible that after we draw cards, one person doesn't get to draw any cards, so they've finished? I think the game is structured so that that should never be the case.
 
             # Reset the field.
             field.clear_field()
-            self.players.attack(new_attack_id)
-            self.players.defend(new_defend_id)
-            self.players.set_current_player(new_attack_id)
-            return field, new_attack_id
+            self.players.attack(new_attacker)
+            self.players.defend(new_defender)
+            self.players.set_current_player(new_attacker)
+            return field, new_attacker
         else:
             # Field is still active. If player was defending, then it's another player's turn to attack, unless player passed along the attack. If player was attacking, then it's the defender's turn to defend.
-            if self.players.is_defend(player_id):
+            if self.players.is_defend(player):
 
                 # See if attack is passed along to next player:
                 if field.first_attack:
@@ -308,9 +301,9 @@ class DurakGame(Game):
 
                     # Pass logic -- if a player plays the same value(s) of those of the first attack, then the attack is passed to next player. All pass does is move defend position. Note -- we do not need to ensure field wasn't empty, because field is active AND it was the first attack.
                     if len(np.unique(np.argwhere(field.attack_buffer + field.defense_buffer)[:,1])) == 1: # if pass is true
-                        if self.players.is_finished(player_id) == False:
-                            self.players.attack(player_id) # Then self.players.is now attacking or finished.
-                            field.attacks += self.players.buffers[player_id] + field.attack_buffer
+                        if self.players.is_finished(player) == False:
+                            self.players.attack(player) # Then self.players.is now attacking or finished.
+                            field.attacks += self.players.buffers[player] + field.attack_buffer
                             field.attack_buffer *= 0
                             player.buffer *= 0
                             attack_passed = True
@@ -318,71 +311,71 @@ class DurakGame(Game):
 
                         # Pass the attack.
                         print('passed')
-                        new_defend_id = self._next_player(player_id)
-                        self.players[new_defend_id].defend()
+                        new_defender = self._next_player(player)
+                        self.players[new_defender].defend()
 
                         # Enable all waiting to attack.
-                        for p_id in range(self.n_players):
-                            if self.players.is_wait(p_id):
-                                self.players.attack(p_id)
+                        for p in range(self.n_players):
+                            if self.players.is_wait(p):
+                                self.players.attack(p)
 
                         # No longer in first attack.
                         field.set_first_attack(attack_passed)
 
                         # New defender is next player to move.
-                        self.players.set_current_player(new_defend_id)
-                        return field, new_defend_id
+                        self.players.set_current_player(new_defender)
+                        return field, new_defender
 
                     # The attack is not passed onto the next player.
                     else:
                         # Enable all waiting to attack.
-                        for p_id in range(self.n_players):
-                            if self.players.is_wait(p_id):
-                                self.players.attack(p_id)
+                        for p in range(self.n_players):
+                            if self.players.is_wait(p):
+                                self.players.attack(p)
 
                         # As this is the first attack, we can choose amongst attack ids that weren't from the original attack.
-                        attack_ids = [p_id for p_id in range(self.n_players) if self.players.is_attack(p_id) and p_id != initial_attack_ids[0]]
-                        new_attack_id = choice(attack_ids)
+                        attackers = [p for p in range(self.n_players) if self.players.is_attack(p) and p != initial_attackers[0]]
+                        new_attacker = choice(attackers)
 
                         # No longer in first attack.
                         field.set_first_attack(False)
 
                         # An attack is next.
-                        self.players.set_current_player(new_attack_id)
-                        return field, new_attack_id
+                        self.players.set_current_player(new_attacker)
+                        return field, new_attacker
 
                 # If it is not the first attack, then we choose the next attacking player randomly.
                 else:
                     # Here we don't need to enable anyone that is waiting to attack, since it's no longer the first attack.
-                    random_player_id = choice(initial_attack_ids)
-                    self.players.set_current_player(random_player_id)
-                    return field, random_player_id
+                    random_player = choice(initial_attackers)
+                    self.players.set_current_player(random_player)
+                    return field, random_player
 
             # If player was attacking, then next player has to be the defender.
-            if self.players.is_attack(player_id):
+            if self.players.is_attack(player):
                 # Chose to do nothing.
                 if len(action) == 0:
                     player.wait()
 
                     # Choose a new attacker.
-                    attack_ids = [p_id for p_id in range(self.n_players) if self.players.is_attack(p_id) and p_id != player_id]
-                    if len(attack_ids) > 0:
-                        next_player_id = choice(attack_ids)
+                    attackers = [p for p in range(self.n_players) if self.players.is_attack(p) and p != player]
+                    if len(attackers) > 0:
+                        next_player = choice(attackers)
                     else:
-                        next_player_id = initial_defend_id
+                        next_player = initial_defender
                 # Chose to attack:
                 else:
-                    next_player_id = initial_defend_id
-                self.players.set_current_player(next_player_id)
-                return field, next_player_id
-        if self.players.is_wait(player_id):
+                    next_player = initial_defender
+                self.players.set_current_player(next_player)
+                return field, next_player
+        if self.players.is_wait(player):
             raise ValueError('Attempted an action with waiting player.')
-        if self.players.is_finished(player_id):
+        if self.players.is_finished(player):
             raise ValueError('Attempted an action with finished player.')
 
     def get_game_ended(self):
-        """Will return 0 if game has not ended, or the player_id, counting from 1 through 5, of the loser of the game."""
-        if sum([self.players.modes[p_id] == 'finished' for p_id in range(self.n_players)]) == self.n_players - 1:
+        """Will return 0 if game has not ended, or the player, counting from 1 through 5, of the loser of the game."""
+        if sum([self.players.modes[p] == 'finished' for p in range(self.n_players)]) == self.n_players - 1:
             return np.argwhere(self.players.modes == _FINISHED)[0][0]
         else:
             return -1

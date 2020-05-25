@@ -107,11 +107,11 @@
 <p>State machine for game of Durak, a card game for 2-5 players.</p>
 <dl class="py method">
 <dt id="Game.DurakGame.get_action_size">
-<code class="sig-name descname">get_action_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_action_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_action_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_action_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Available actions given player</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>player_id</strong> (<em>int</em>) – index for player</p>
+<dd class="field-odd"><p><strong>player</strong> (<em>int</em>) – index for player</p>
 </dd>
 </dl>
 </dd></dl>
@@ -124,7 +124,7 @@
 <dl class="py method">
 <dt id="Game.DurakGame.get_game_ended">
 <code class="sig-name descname">get_game_ended</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_game_ended" title="Permalink to this definition">¶</a></dt>
-<dd><p>Will return 0 if game has not ended, or the player_id, counting from 1 through 5, of the loser of the game.</p>
+<dd><p>Will return 0 if game has not ended, or the player, counting from 1 through 5, of the loser of the game.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -135,19 +135,19 @@
 
 <dl class="py method">
 <dt id="Game.DurakGame.get_next_state">
-<code class="sig-name descname">get_next_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player_id</span></em>, <em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_next_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_next_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player</span></em>, <em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_next_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the state of the playing field (<cite>Field.DurakField</cite>) after player (<cite>Agent.DurakPlayer</cite>) performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (<cite>Cards.DurakDeck</cite>) is unempty.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>field</strong> (<a class="reference internal" href="#Field.DurakField" title="Field.DurakField"><em>DurakField</em></a>) – Current state of the field.</p></li>
 <li><p><strong>action</strong> (<em>tuple</em><em>) or </em><em>(</em><em>str</em>) – Action player will take.</p></li>
-<li><p><strong>player_id</strong> (<em>int</em>) – Index of player</p></li>
+<li><p><strong>player</strong> (<em>int</em>) – Index of player</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The field after applying action.
-next_player_id (int): The id of player who plays in the next turn.</p>
+next_player (int): The id of player who plays in the next turn.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>new_field (<a class="reference internal" href="#Field.DurakField" title="Field.DurakField">Field.DurakField</a>)</p>
@@ -156,13 +156,8 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Game.DurakGame.get_player_id">
-<code class="sig-name descname">get_player_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_player_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt id="Game.DurakGame.get_valid_moves">
-<code class="sig-name descname">get_valid_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_valid_moves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_valid_moves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.get_valid_moves" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Input:</dt><dd><p>players: current player(s)</p>
 </dd>
@@ -176,11 +171,6 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py method">
-<dt id="Game.DurakGame.new_player">
-<code class="sig-name descname">new_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakGame.new_player" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakGame.string_representation">
@@ -200,28 +190,28 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 <p>Wrapper class for managing the players in a game of Durak.</p>
 <dl class="py method">
 <dt id="Game.DurakPlayers.attack">
-<code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.attack" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.attack" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.clear_buffer">
-<code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.clear_buffer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clear_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.clear_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all cards from the buffer hand.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.defend">
-<code class="sig-name descname">defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.defend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.defend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.finished">
-<code class="sig-name descname">finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.finished" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.get_len">
-<code class="sig-name descname">get_len</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_len" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_len</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.get_len" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -232,27 +222,27 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.hand_is_empty">
-<code class="sig-name descname">hand_is_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.hand_is_empty" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hand_is_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.hand_is_empty" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.is_attack">
-<code class="sig-name descname">is_attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_attack" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_attack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_attack" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.is_defend">
-<code class="sig-name descname">is_defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_defend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_defend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_defend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.is_finished">
-<code class="sig-name descname">is_finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_finished" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_finished</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.is_wait">
-<code class="sig-name descname">is_wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_wait" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#Game.DurakPlayers.is_wait" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -269,13 +259,13 @@ next_player_id (int): The id of player who plays in the next turn.</p>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.set_current_player">
-<code class="sig-name descname">set_current_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.set_current_player" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_current_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.set_current_player" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the active player id.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Game.DurakPlayers.wait">
-<code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.wait" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">player</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Game.DurakPlayers.wait" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
