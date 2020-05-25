@@ -14,16 +14,23 @@ The ``DurakGame`` class
     :undoc-members:
     :show-inheritance:
 
-The ``DurakField`` class
+The ``DurakPlayers`` class
 ************************************
-.. autoclass:: Field.DurakField
+.. autoclass:: Game.DurakPlayers
     :members:
     :undoc-members:
     :show-inheritance:
 
-The ``DurakPlayer`` class
+The ``Agent`` Module
 ************************************
-.. autoclass:: Agent.DurakPlayer
+.. automodule:: Agent
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+The ``DurakField`` class
+************************************
+.. autoclass:: Field.DurakField
     :members:
     :undoc-members:
     :show-inheritance:
