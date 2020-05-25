@@ -159,29 +159,29 @@ class DurakPlayers():
 class DurakGame(Game):
     """State machine for game of Durak, a card game for 2-5 players."""
     def __init__(self, deck_mode, n_players) -> None:
-        self.deck = DurakDeck(mode = deck_mode)
+        deck = DurakDeck(mode = deck_mode)
         self.players = DurakPlayers(deck.n_suits, deck.n_vals, n_players)
 
         self.n_players = n_players
 
         self.init_field = None
-        self._begin_game()
+        self._begin_game(deck)
 
     def get_current_player(self):
         return self.players.current_player
 
-    def _begin_game(self):
+    def _begin_game(self, deck):
         """Assume all players are now assigned player via self.new_player. Deck is shuffled, then cut. 6 cards are dealt to each of the players. Finally the playing field (`Field`) is initialized."""
         # Create a deck object.
 
         # Shuffle and cut the deck.
-        shuffle(self.deck)
-        self.deck.cut()
-        trump_idx = self.deck[-1].suit_idx
+        shuffle(deck)
+        deck.cut()
+        trump_idx = deck[-1].suit_idx
 
         # Initialize player hands.
         for i in range(self.n_players):
-            self.players.hands[i]= self.deck.draw_hand_from_deck(trump_idx=trump_idx, n_cards=6)
+            self.players.hands[i]= deck.draw_hand_from_deck(trump_idx=trump_idx, n_cards=6)
 
         # Decide who gets to attack and defend.
         highest_trump_cards = [(id, np.max(np.argwhere(hand[0,:]))) for id, hand in self.hands]

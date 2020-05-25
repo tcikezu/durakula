@@ -33,8 +33,8 @@ class DurakField(Field):
         """Inits DurakField with deck and players."""
         self.n_vals = deck.n_vals
         self.n_suits = deck.n_suits
-        self.drawing_deck = deck
-        self.trump_suit = self.drawing_deck[-1].suit
+        self.deck = deck
+        self.trump_suit = self.deck[-1].suit
 
         self.players = players
         self.attack_order = []
@@ -60,11 +60,11 @@ class DurakField(Field):
         """Output string for Field."""
 
         head = '--- Playing Field ---\n'
-        drawing_deck_str = 'Drawing DurakDeck: ' + str(self.drawing_deck) + '\n'
+        deck_str = 'Drawing DurakDeck: ' + str(self.deck) + '\n'
         player_str = str(self.players)
         trump_str = 'Trump suit is ' + self.trump_suit + '\n'
         tail = '---------------------\n'
-        return head + drawing_deck_str + player_str + trump_str + tail
+        return head + deck_str + player_str + trump_str + tail
 
     def set_first_attack(self, first_attack):
         """Boolean layer that is all 1's if this is indeed the first attack, and all 0's
@@ -73,10 +73,10 @@ class DurakField(Field):
         self.field_state[3,:,:] = self.first_attack
 
     def _set_number_cards(self):
-        """Encode the number of cards left in the deck (from which we draw new cards -- hence drawing_deck.)
+        """Encode the number of cards left in the deck (from which we draw new cards -- hence deck.)
         This will look like a bunch of 0's followed by a bunch of 1's -- sorting
         allows us to get rid of all suit / value information."""
-        self.field_state[4,:,:] = np.sort(np.sort(self.drawing_deck.cards,axis=0),axis=1)
+        self.field_state[4,:,:] = np.sort(np.sort(self.deck.cards,axis=0),axis=1)
 
     def clear_field(self):
         """Clear field after a defender has successfully defended or given up. Make all that aren't finished in wait mode."""
@@ -103,7 +103,7 @@ class DurakField(Field):
                 return [()]
 
             nontrump_attack_idxs = attack_idxs[attack_idxs >= self.n_vals]
-            valid_defenses = np.zeros((self.drawing_deck.cards.size, self.drawing_deck.cards.size))
+            valid_defenses = np.zeros((self.deck.cards.size, self.deck.cards.size))
 
             f = lambda x : (x // self.n_vals + 1)*self.n_vals # Compute the suit ceil - ie, 13, 26, 39, 52 depending on x's suit.
 
@@ -233,7 +233,7 @@ class DurakField(Field):
         elif self.players.is_finished(player):
             pass
 
-        # Note - even if there are cards in drawing_deck remaining, an empty hand at end of round means you've finished play.
+        # Note - even if there are cards in deck remaining, an empty hand at end of round means you've finished play.
         if self.players.hand_is_empty(player):
             if self.players.is_defend(player):
                 self.is_active = False
