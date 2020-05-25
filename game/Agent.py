@@ -51,14 +51,14 @@ def HumanMultiPlayer(MultiPlayer):
     def play(self, field) -> None:
         action = None
         while(action is None):
-            if self.game.players.is_defend()
+            if self.game.players.is_defend():
                 action = input("Select an action: 0 - defend, 1 - pass.")
             if self.game.players.is_attack():
                 action = input("Select an action: 0 - attack, 1 - pass.")
             if action != 0 or action != 1:
                 action = None
         if action == 0:
-            valid_moves = [str(i) + ': ' str(move) for i,move in enumerate(game.get_valid_moves())]
+            valid_moves = [str(i) + ': ' + str(move) for i,move in enumerate(game.get_valid_moves())]
             print('Valid moves: ', ' '.join(valid_moves))
             move = None
             while(move is None):

@@ -133,7 +133,7 @@ class DurakPlayers():
             self.modes[player] += _ATTACK
 
     def defend(self, player = None):
-        if player is None
+        if player is None:
             self.modes[self.current_player] *= 0
             self.modes[self.current_player] += _DEFEND
         else:
@@ -154,12 +154,12 @@ class DurakPlayers():
         return self.modes[player].any() == _WAIT
 
     def is_attack(self, player = None) -> bool:
-        if player is None
+        if player is None:
             return self.modes[self.current_player].any() == _ATTACK
         return self.modes[player].any() == _ATTACK
 
     def is_defend(self, player = None) -> bool:
-        if player is None
+        if player is None:
             return self.modes[self.current_player].any() == _DEFEND
         return self.modes[player].any() == _DEFEND
 
@@ -169,7 +169,7 @@ class DurakPlayers():
         return self.modes[player].any() == _FINISHED
 
     def hand_is_empty(self, player = None) -> bool:
-        if player is None
+        if player is None:
             return np.sum(self.hands[self.current_player]) == 0
         return np.sum(self.hands[player]) == 0
 

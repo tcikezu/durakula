@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 from pytorch_classification.utils import Bar, AverageMeter
 import time
 
