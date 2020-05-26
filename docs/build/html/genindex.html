@@ -36,7 +36,6 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
@@ -54,15 +53,16 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.attack">attack() (Agent.DurakPlayer method)</a>
-</li>
-  </ul></td>
-</tr></table>
+      <li>
+    Agent
 
-<h2 id="B">B</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
+      <ul>
+        <li><a href="index.html#module-Agent">module</a>
+</li>
+      </ul></li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.begin_game">begin_game() (Game.DurakGame method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.attack">attack() (Game.DurakPlayerStates method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -83,9 +83,13 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.clear_buffer">clear_buffer() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.clear_buffer">clear_buffer() (Game.DurakPlayerStates method)</a>
 </li>
       <li><a href="index.html#Field.DurakField.clear_field">clear_field() (Field.DurakField method)</a>
+</li>
+      <li><a href="index.html#Cards.DurakDeck.convert_deck_to_hand">convert_deck_to_hand() (Cards.DurakDeck static method)</a>
+</li>
+      <li><a href="index.html#Cards.DurakDeck.convert_hand_to_deck">convert_hand_to_deck() (Cards.DurakDeck class method)</a>
 </li>
       <li><a href="index.html#Cards.CardCollection.cut">cut() (Cards.CardCollection method)</a>
 </li>
@@ -95,23 +99,21 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.defend">defend() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.defend">defend() (Game.DurakPlayerStates method)</a>
 </li>
-      <li><a href="index.html#Field.DurakField.defense_combinations">defense_combinations() (Field.DurakField method)</a>
+      <li><a href="index.html#Cards.CardCollection.draw">draw() (Cards.CardCollection method)</a>
 </li>
-      <li><a href="index.html#Cards.CardCollection.draw_card">draw_card() (Cards.CardCollection method)</a>
-</li>
-      <li><a href="index.html#Cards.DurakDeck">DurakDeck (class in Cards)</a>
+      <li><a href="index.html#Cards.DurakDeck.draw_hand_from_deck">draw_hand_from_deck() (Cards.DurakDeck method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#Cards.DurakDeck">DurakDeck (class in Cards)</a>
+</li>
       <li><a href="index.html#Field.DurakField">DurakField (class in Field)</a>
 </li>
       <li><a href="index.html#Game.DurakGame">DurakGame (class in Game)</a>
 </li>
-      <li><a href="index.html#Cards.DurakHand">DurakHand (class in Cards)</a>
-</li>
-      <li><a href="index.html#Agent.DurakPlayer">DurakPlayer (class in Agent)</a>
+      <li><a href="index.html#Game.DurakPlayerStates">DurakPlayerStates (class in Game)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -131,13 +133,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.field_is_empty">field_is_empty() (Field.DurakField method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.finished">finished() (Agent.DurakPlayer method)</a>
-</li>
-      <li><a href="index.html#Field.DurakField.first_attack_combinations">first_attack_combinations() (Field.DurakField method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.finished">finished() (Game.DurakPlayerStates method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -147,21 +143,29 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#Game.DurakGame.get_action_size">get_action_size() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Cards.DurakHand.get_deck_from_hand">get_deck_from_hand() (Cards.DurakHand method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.get_attackers">get_attackers() (Game.DurakPlayerStates method)</a>
+</li>
+      <li><a href="index.html#Game.DurakGame.get_current_player">get_current_player() (Game.DurakGame method)</a>
+</li>
+      <li><a href="index.html#Game.DurakPlayerStates.get_defender">get_defender() (Game.DurakPlayerStates method)</a>
 </li>
       <li><a href="index.html#Game.DurakGame.get_game_ended">get_game_ended() (Game.DurakGame method)</a>
 </li>
-      <li><a href="index.html#Cards.DurakHand.get_hand_from_deck">get_hand_from_deck() (Cards.DurakHand method)</a>
+      <li><a href="index.html#Game.DurakGame.get_init_field">get_init_field() (Game.DurakGame method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Game.DurakGame.get_init_field">get_init_field() (Game.DurakGame method)</a>
-</li>
       <li><a href="index.html#Field.DurakField.get_legal_moves">get_legal_moves() (Field.DurakField method)</a>
+</li>
+      <li><a href="index.html#Game.DurakPlayerStates.get_len">get_len() (Game.DurakPlayerStates method)</a>
 </li>
       <li><a href="index.html#Game.DurakGame.get_next_state">get_next_state() (Game.DurakGame method)</a>
 </li>
+      <li><a href="index.html#Game.DurakPlayerStates.get_str">get_str() (Game.DurakPlayerStates method)</a>
+</li>
       <li><a href="index.html#Game.DurakGame.get_valid_moves">get_valid_moves() (Game.DurakGame method)</a>
+</li>
+      <li><a href="index.html#Agent.GreedyMultiPlayer">GreedyMultiPlayer() (in module Agent)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -169,11 +173,15 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.hand_is_empty">hand_is_empty() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.hand_is_empty">hand_is_empty() (Game.DurakPlayerStates method)</a>
+</li>
+      <li><a href="index.html#Field.DurakField.has_legal_moves">has_legal_moves() (Field.DurakField method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.has_legal_moves">has_legal_moves() (Field.DurakField method)</a>
+      <li><a href="index.html#Agent.HumanMultiPlayer">HumanMultiPlayer() (in module Agent)</a>
+</li>
+      <li><a href="index.html#Agent.HumanPlayer">HumanPlayer (class in Agent)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -181,15 +189,15 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.is_attack">is_attack() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.is_attack">is_attack() (Game.DurakPlayerStates method)</a>
 </li>
-      <li><a href="index.html#Agent.DurakPlayer.is_defend">is_defend() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.is_defend">is_defend() (Game.DurakPlayerStates method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.is_finished">is_finished() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.is_finished">is_finished() (Game.DurakPlayerStates method)</a>
 </li>
-      <li><a href="index.html#Agent.DurakPlayer.is_wait">is_wait() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.is_wait">is_wait() (Game.DurakPlayerStates method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -197,28 +205,38 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.manual_action">manual_action() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Agent.MCTSMultiPlayer">MCTSMultiPlayer() (in module Agent)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
       <ul>
+        <li><a href="index.html#module-Agent">Agent</a>
+</li>
         <li><a href="index.html#module-Cards">Cards</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#Agent.MultiPlayer">MultiPlayer (class in Agent)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.player_in_defense">player_in_defense() (Field.DurakField method)</a>
+      <li><a href="index.html#Agent.MultiPlayer.play">play() (Agent.MultiPlayer method)</a>
+
+      <ul>
+        <li><a href="index.html#Agent.Player.play">(Agent.Player method)</a>
 </li>
+        <li><a href="index.html#Agent.RandomPlayer.play">(Agent.RandomPlayer method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Field.DurakField.players_in_attack">players_in_attack() (Field.DurakField method)</a>
+      <li><a href="index.html#Agent.Player">Player (class in Agent)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -226,6 +244,12 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#Agent.RandomMultiPlayer">RandomMultiPlayer() (in module Agent)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#Agent.RandomPlayer">RandomPlayer (class in Agent)</a>
+</li>
       <li><a href="index.html#Cards.CardCollection.reorder">reorder() (Cards.CardCollection method)</a>
 </li>
   </ul></td>
@@ -234,7 +258,9 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.select_card">select_card() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.set_current_player">set_current_player() (Game.DurakPlayerStates method)</a>
+</li>
+      <li><a href="index.html#Field.DurakField.set_first_attack">set_first_attack() (Field.DurakField method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -248,7 +274,7 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#Agent.DurakPlayer.wait">wait() (Agent.DurakPlayer method)</a>
+      <li><a href="index.html#Game.DurakPlayerStates.wait">wait() (Game.DurakPlayerStates method)</a>
 </li>
   </ul></td>
 </tr></table>

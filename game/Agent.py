@@ -1,77 +1,85 @@
-from utils import *
-from Cards import DurakHand
-class Agent:
-    def __init__(self):
-        pass
-    def action(self):
-        """ perform some action? ask to perform some action? """
+import numpy as np
+
+class Player:
+    """A player object is initialized with the game. Its main function is to take the state of the game (ie the board) as input, and return an action."""
+    def __init__(self, game):
         pass
 
-_WAIT = 'MODE_WAIT'
-_ATTACK = 'MODE_ATTACK'
-_DEFEND = 'MODE_DEFEND'
-_FINISHED = 'MODE_FINISHED'
-class DurakPlayer(DurakHand):
-    """ All a durak player needs is a hand and an ID."""
-    def __init__(self, deck, player_id: int) -> None:
-        super().__init__(deck) 
-        self.player_id = player_id
-        self.player_mode = _WAIT
-        self.buffer = np.zeros_like(self.hand)
+    def play(self, board):
+        """Given the board, return an action."""
+        pass
 
-    def __str__(self):
-        return str(self.player_id) + ':' + str(self.get_deck_from_hand())
+class RandomPlayer():
+    def __init__(self, game):
+        self.game = game
 
-    def __len__(self):
-        return np.sum(self.hand)
+    def play(self, field):
+        a = np.random.randint(self.game.getActionSize())
+        valids = self.game.getValidMoves(board, 1)
+        while valids[a]!=1:
+            a = np.random.randint(self.game.getActionSize())
+        return a
 
-    def clear_buffer(self):
-        """Remove all cards from the buffer hand."""
-        self.buffer *= 0
+class HumanPlayer():
+    def __init__(self, game):
+        self.game = game
 
-    def wait(self) -> None:
-        """Change player mode to wait."""
-        self.player_mode = _WAIT
-    def attack(self) -> None:
-        """Change player mode to attack."""
-        self.player_mode = _ATTACK
-    def defend(self) -> None:
-        """Change player mode to defend."""
-        self.player_mode = _DEFEND
-    def finished(self) -> None:
-        """Change player mode to finished."""
-        self.player_mode = _FINISHED
+class MultiPlayer():
+    """Base class for games involving more than 2 players."""
+    def __init__(self, game):
+        self.game = game
+        self.game.new_player(self)
 
-    def is_wait(self) -> bool:
-        return self.player_mode == _WAIT
-    def is_attack(self) -> bool:
-        return self.player_mode == _ATTACK
-    def is_defend(self) -> bool:
-        return self.player_mode == _DEFEND
-    def is_finished(self) -> bool:
-        return self.player_mode == _FINISHED
+    def play(self, field):
+        pass
 
-    def hand_is_empty(self) -> bool:
-        return np.sum(self.hand) == 0
+def RandomMultiPlayer(MultiPlayer):
+    def __init__(self, game):
+        super().__init__(game)
+    
+    def play(self, field):
+        a = np.random.randint(self.game.get_action_size())
+        valids = self.game.get_valid_moves(field)
+        while valids[a] != 1:
+            a = np.random.randint(self.game.get_action_size())
+        return a
 
-    def manual_action(self) -> None:
+def HumanDurakPlayer(MultiPlayer):
+    def __init__(self, game):
+        super().__init__(game)
+
+    def play(self, field) -> None:
         action = None
-        while(action == None):
-            if self.is_defend():
+        while(action is None):
+            if self.game.players.is_defend():
                 action = input("Select an action: 0 - defend, 1 - pass.")
-            if self.is_attack():
+            if self.game.players.is_attack():
                 action = input("Select an action: 0 - attack, 1 - pass.")
-
             if action != 0 or action != 1:
                 action = None
-        card = None
         if action == 0:
-            card = self.select_card()
+            valid_moves = [str(i) + ': ' + str(move) for i,move in enumerate(game.get_valid_moves())]
+            print('Valid moves: ', ' '.join(valid_moves))
+            move = None
+            while(move is None):
+                move = input('Choose a valid move:')
+                if move < 0 or move >= len(valid_moves):
+                    move = None
+            return move
         elif action == 1:
             return
-        else:
-            return
 
-    def select_card(self) -> str:
-        card = input('Select a card: (<SUIT><VALUE>)')
-        return card
+def GreedyMultiPlayer(MultiPlayer):
+    def __init__(self, game):
+        super().__init__(game)
+    
+    def play(self, field):
+        pass
+
+def MCTSMultiPlayer(MultiPlayer):
+    def __init__(self, MCTS, game):
+        super().__init__(game)
+        self.mcts = MCTS
+
+    def play(self, field):
+        pass
