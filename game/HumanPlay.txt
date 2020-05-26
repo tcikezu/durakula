@@ -1,0 +1,3 @@
+HumanPlay branch -- this is and NeuralNet are branches of AbstractDeck branch, which is itself a branch of master. 
+
+Goal of HumanPlay branch is to eventually get multiple players to play Durak with each other, and potentially the DurakAI.

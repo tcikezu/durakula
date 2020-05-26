@@ -23,11 +23,11 @@ class Card():
         return self.card
 
     def __str__(self):
-        return self.value + ' of ' + self.suit
+        return self.suit + ' of ' + self.value
 
 class CardCollection():
     """First In Last Out collection of Card objects, implemented with collection.deque storing deck order, and np.ndarray representing cards inside the deck."""
-    def __init__(self, n_suits: int = 4, n_vals: int = 13, fill=True):
+    def __init__(self, n_suits: int, n_vals: int, fill=True):
         assert(0 < n_suits <=4 and 0 < n_vals <= 13), 'Deck dimensions out of bounds'
         if fill == True:
             self.deck = deque([Card(s,v) for s in range(n_suits) for v in range(n_vals)])
@@ -68,6 +68,7 @@ class CardCollection():
     def __eq__(self, other):
         return self.cards.all() == other.cards.all() and self.deck == other.order
 
+
     def empty(self):
         """Empty this deck."""
         self.cards *= 0
@@ -78,11 +79,13 @@ class CardCollection():
 
     def draw(self, n=1):
         drawn_cards = copy.deepcopy(self)
+        drawn_cards.empty()
         if self.__len__() == 0:
             return drawn_cards
         drawn_cards.empty()
         for i in range(min(n,len(self.deck))):
             card = self.deck.popleft()
+
             self.cards[card.suit_idx, card.value_idx] = 0
             drawn_cards.cards[card.suit_idx, card.value_idx] = 1
             drawn_cards.deck.appendleft(card)
