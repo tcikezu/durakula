@@ -1,7 +1,7 @@
 from collections import deque
 import numpy as np
 from random import choice, shuffle
-from Field import DurakField, _ACTION_GIVEUP
+from Field import DurakField
 from Cards import DurakDeck
 
 class Game:
@@ -245,6 +245,13 @@ class DurakGame(MultiPlayerGame):
                 return p
         return None
 
+    def _defender_gives_up(self, field: DurakField, action):
+        """A defender gives up iff they choose to not play a hand, and they are under attack. However, a defender has defended successfully, if they choose not to play a hand, and if all other players are either waiting or finished."""
+        if action is None:
+            if field.defender_is_under_attack():
+                return True
+        return False
+
     def get_next_state(self, field: DurakField, player: int, action):
         """Updates the state of the playing field (`Field.DurakField`) after the player performs the given action. Resets the playing field if defense is successful or failed. Draws cards for players that have less than six cards while deck (`Cards.DurakDeck`) is unempty.
 
@@ -277,15 +284,14 @@ class DurakGame(MultiPlayerGame):
 
         # The playing field inactivates only after a successful or unsuccessful defense.
         if field.is_active == False:
-            if len(action) == 0: # A successful defense happened.
+            if self._defender_gives_up(field, move) == False: # A successful defense happened.
                 if self.players.is_finished():
                     new_defender = self._next_player(player)
-                    new_attacker = self._previous_player(next_player)
+                    new_attacker = self._previous_player(new_defender)
                 else: # Current player becomes new attacker.
                     new_attacker = player
                     new_defender = self._next_player(new_attacker)
-
-            elif action == _ACTION_GIVEUP: # An unsuccessful defense happened.
+            else:
                 new_attacker = self._next_player(player)
                 new_defender = self._next_player(new_attacker)
 

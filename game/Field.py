@@ -22,9 +22,7 @@ class Field:
     # def _increment_move(move):
     # 	""" Generator expression for incrementing moves """
 
-# _ACTION_WAIT = 'ACTION_WAIT'
-# _ACTION_ATTACK = 'ACTION_ATTACK'
-_ACTION_GIVEUP = 'ACTION_GIVEUP'
+_ACTION_GIVEUP = None
 
 class DurakField(Field):
     """This class defines legal moves you can make in a game of Durak, given every players' hands and the current cards played on the field."""
@@ -91,6 +89,10 @@ class DurakField(Field):
                 self.players.wait(player)
         self.is_active = True
         self.attack_order = []
+
+    @property
+    def defender_is_under_attack(self):
+        return np.sum(self.attacks) > 0
 
     def get_legal_moves(self, player) -> list:
         """Returns a list of legal moves. The basic moves are to attack and to defend. If player mode is set to finished or wait, then no move can be performed. A player in defense can always give up. If first attack, then attack must be performed."""
